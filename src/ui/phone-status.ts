@@ -60,11 +60,13 @@ export interface PhoneStatusHandle {
   update(input: StatusInput): void;
   showNotice(notice: Notice): void;
   showClosed(lastPageIndex: number, totalPages: number): void;
+  hideReading(): void;
+  showReading(): void;
 }
 
 export function mountPhoneStatus(
-  initialBook: Book,
-  totalPages: number,
+  _initialBook: Book,
+  _totalPages: number,
 ): PhoneStatusHandle {
   const root = document.querySelector<HTMLElement>("#phone-status");
   if (!root) {
@@ -72,21 +74,31 @@ export function mountPhoneStatus(
   }
 
   const connectionEl = root.querySelector<HTMLElement>(".connection");
-  const titleEl = root.querySelector<HTMLElement>(".title");
-  const authorEl = root.querySelector<HTMLElement>(".author");
-  const progressEl = root.querySelector<HTMLElement>(".progress");
+  const readingEl = root.querySelector<HTMLElement>(".reading");
+  const titleEl = root.querySelector<HTMLElement>(".reading .title");
+  const authorEl = root.querySelector<HTMLElement>(".reading .author");
+  const progressEl = root.querySelector<HTMLElement>(".reading .progress");
   const noticeEl = root.querySelector<HTMLElement>(".notice");
 
-  if (!connectionEl || !titleEl || !authorEl || !progressEl || !noticeEl) {
+  if (
+    !connectionEl ||
+    !readingEl ||
+    !titleEl ||
+    !authorEl ||
+    !progressEl ||
+    !noticeEl
+  ) {
     throw new Error("phone-status: missing required child elements");
   }
 
-  // Seed the static title/author from the bundled book.
-  titleEl.textContent = initialBook.title;
-  authorEl.textContent = initialBook.author;
-  progressEl.textContent = `Page 1 of ${totalPages}`;
+  // Seed bare values; the .reading section is hidden by default in v2 and
+  // shown only when a book is actively open (showReading()).
+  titleEl.textContent = "";
+  authorEl.textContent = "";
+  progressEl.textContent = "";
   connectionEl.textContent = "Connecting…";
   connectionEl.dataset.state = "connecting";
+  readingEl.hidden = true;
   noticeEl.hidden = true;
 
   let noticeTimer: ReturnType<typeof setTimeout> | null = null;
@@ -112,6 +124,12 @@ export function mountPhoneStatus(
     showClosed(lastPageIndex, totalPages) {
       progressEl.textContent =
         `Reader closed (was on Page ${lastPageIndex + 1} of ${totalPages})`;
+    },
+    hideReading() {
+      readingEl.hidden = true;
+    },
+    showReading() {
+      readingEl.hidden = false;
     },
   };
 }

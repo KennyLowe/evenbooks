@@ -1,16 +1,23 @@
 /**
- * Persistence layer.
+ * Persistence layer (v2: per-book reading position).
  *
- * Single key: STORAGE_KEY. Single value shape: StoredPosition (JSON).
- * Read-time recovery state machine per contracts/persistence.md (R6).
+ * Each book's reading position lives at its own KV key, namespaced by book id.
+ * Read-time recovery state machine per contracts/persistence-v2.md (R6).
  * Save failures are caught and surfaced via the NoticeChannel; never thrown.
+ *
+ * The legacy v1 key `evenBooks.position.v1` is handled by the migration
+ * step in `persistence-v2-migration.ts`; this module no longer references it.
  */
 
 import { EvenAppBridge } from "@evenrealities/even_hub_sdk";
 import type { BookId } from "../content/sample-text";
 import type { NoticeChannel } from "./errors";
 
-export const STORAGE_KEY = "evenBooks.position.v1";
+const POSITION_KEY_PREFIX = "evenBooks.position.";
+
+export function positionKeyFor(bookId: BookId): string {
+  return POSITION_KEY_PREFIX + bookId;
+}
 
 export interface StoredPosition {
   readonly book: BookId;
@@ -39,7 +46,7 @@ export async function readPosition(
   book: BookId,
   totalPages: number,
 ): Promise<ReadResult> {
-  const raw = await bridge.getLocalStorage(STORAGE_KEY);
+  const raw = await bridge.getLocalStorage(positionKeyFor(book));
 
   if (raw === undefined || raw === null || raw === "") {
     return { kind: "fresh-start" };
@@ -82,7 +89,7 @@ export async function writePosition(
 ): Promise<void> {
   const payload = JSON.stringify(position);
   try {
-    const ok = await bridge.setLocalStorage(STORAGE_KEY, payload);
+    const ok = await bridge.setLocalStorage(positionKeyFor(position.book), payload);
     if (!ok) {
       channel.emit({ kind: "save-failed" });
     }

@@ -47,6 +47,9 @@
       .reading {
         margin: 0 0 1.25rem 0;
       }
+      .reading[hidden] {
+        display: none;
+      }
       .reading .title {
         margin: 0;
         font-size: 1.1rem;
@@ -60,6 +63,91 @@
       .reading .progress {
         margin: 0;
         font-variant-numeric: tabular-nums;
+      }
+      .import {
+        margin: 1rem 0;
+      }
+      .import .add-book {
+        appearance: none;
+        background: #3a3a3a;
+        color: #e5e5e5;
+        border: 1px solid #555;
+        border-radius: 0.4rem;
+        padding: 0.6rem 1rem;
+        font: inherit;
+        cursor: pointer;
+      }
+      .import .add-book:hover {
+        background: #444;
+      }
+      .import .add-book:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .import-progress {
+        margin: 0.75rem 0 0 0;
+        color: #aaa;
+        font-size: 0.95rem;
+      }
+      .import-progress[hidden] {
+        display: none;
+      }
+      .import-progress .spinner {
+        display: inline-block;
+        width: 0.7rem;
+        height: 0.7rem;
+        border: 2px solid #aaa;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 0.5rem;
+        vertical-align: -1px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      .import-error {
+        margin: 0.75rem 0 0 0;
+        padding: 0.6rem 0.9rem;
+        border-left: 3px solid #e07a7a;
+        background: rgba(224, 122, 122, 0.12);
+        font-size: 0.95rem;
+        color: #e5e5e5;
+      }
+      .import-error[hidden] {
+        display: none;
+      }
+      .library h2 {
+        margin: 1.5rem 0 0.75rem 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #ccc;
+      }
+      .library .entries {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .library .entry {
+        padding: 0.7rem 0.8rem;
+        margin: 0 -0.8rem;
+        border-radius: 0.3rem;
+        cursor: pointer;
+      }
+      .library .entry:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .library .entry[data-content="evicted"] {
+        opacity: 0.5;
+      }
+      .library .entry-title {
+        margin: 0;
+        font-weight: 600;
+      }
+      .library .entry-author {
+        margin: 0.05rem 0 0 0;
+        color: #aaa;
+        font-size: 0.92rem;
       }
       .notice {
         margin-top: 1rem;
@@ -80,10 +168,25 @@
         <p class="connection" data-state="connecting">Connecting…</p>
       </header>
 
-      <section class="reading">
+      <section class="reading" hidden>
         <p class="title"></p>
         <p class="author"></p>
         <p class="progress"></p>
+      </section>
+
+      <section class="import">
+        <button class="add-book" type="button">Add book</button>
+        <input class="file-picker" type="file" accept=".epub,.txt" hidden />
+        <p class="import-progress" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="progress-text"></span>
+        </p>
+        <p class="import-error" hidden></p>
+      </section>
+
+      <section class="library">
+        <h2>Your library</h2>
+        <ul class="entries"></ul>
       </section>
 
       <aside class="notice" hidden></aside>

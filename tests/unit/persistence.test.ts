@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  STORAGE_KEY,
+  positionKeyFor,
   readPosition,
   writePosition,
 } from "../../src/platform/persistence";
 import { createNoticeChannel } from "../../src/platform/errors";
+
+const SAMPLE_KEY = positionKeyFor("sample");
 
 interface FakeBridge {
   setLocalStorage: ReturnType<typeof vi.fn>;
@@ -23,7 +25,7 @@ describe("readPosition", () => {
     const bridge = fakeBridge("");
     const result = await readPosition(bridge as never, "sample", 45);
     expect(result).toEqual({ kind: "fresh-start" });
-    expect(bridge.getLocalStorage).toHaveBeenCalledWith(STORAGE_KEY);
+    expect(bridge.getLocalStorage).toHaveBeenCalledWith(SAMPLE_KEY);
   });
 
   it("returns recovered/unparseable for garbage", async () => {
@@ -82,7 +84,7 @@ describe("writePosition", () => {
       page: 12,
       savedAt: 1730000000000,
     });
-    expect(bridge.setLocalStorage).toHaveBeenCalledWith(STORAGE_KEY, expect.any(String));
+    expect(bridge.setLocalStorage).toHaveBeenCalledWith(SAMPLE_KEY, expect.any(String));
     expect(received).toHaveLength(0);
   });
 
