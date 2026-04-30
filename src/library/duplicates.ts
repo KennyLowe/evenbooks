@@ -21,7 +21,10 @@ function bytesToHex(bytes: Uint8Array): string {
 
 /** Hash raw file bytes (used for EPUBs — file-byte-identity). */
 export async function hashFileBytes(buffer: ArrayBuffer): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", buffer);
+  // Wrap in Uint8Array — jsdom's SubtleCrypto polyfill requires a TypedArray
+  // rather than a bare ArrayBuffer. Native browser / Node implementations
+  // accept both, so this is defence in depth.
+  const digest = await crypto.subtle.digest("SHA-256", new Uint8Array(buffer));
   return bytesToHex(new Uint8Array(digest)).slice(0, HASH_LENGTH);
 }
 
