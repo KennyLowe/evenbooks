@@ -1,0 +1,4 @@
+# Normalise line endings to LF in the repo. Workspaces on Windows can keep
+# CRLF in the working tree; the canonical stored form is LF, which matches
+# our Prettier config (.prettierrc.json `endOfLine: "lf"`).
+* text=auto eol=lf

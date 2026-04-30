@@ -214,7 +214,9 @@ describe("deleteBook — exit active reader", () => {
     // exit-end must precede the first setLocalStorage call (the library
     // write).
     const exitEndIdx = order.indexOf("exit-end:" + id);
-    const firstSetIdx = order.findIndex((s) => s.startsWith("setLocalStorage:"));
+    const firstSetIdx = order.findIndex((s) =>
+      s.startsWith("setLocalStorage:"),
+    );
     expect(exitEndIdx).toBeGreaterThanOrEqual(0);
     expect(firstSetIdx).toBeGreaterThan(exitEndIdx);
   });

@@ -16,13 +16,13 @@ Returns the right comparator for any `SortOption`. Each comparator is pure, dete
 
 ## Per-option rules
 
-| `SortOption` | Primary key (descending unless noted) | Tie-breakers |
-|---|---|---|
-| `"most-recent"` | `max(addedAt, lastOpenedAt ?? 0)` desc | id asc |
-| `"title-asc"` | title (case-insensitive) asc | author (ci) asc, id asc |
-| `"author-asc"` | author (ci) asc | title (ci) asc, id asc |
-| `"most-completed"` | `(currentPage / totalPages)` desc; never-opened = 0 | title (ci) asc, id asc |
-| `"date-added-desc"` | `addedAt` desc | id asc |
+| `SortOption`        | Primary key (descending unless noted)               | Tie-breakers            |
+| ------------------- | --------------------------------------------------- | ----------------------- |
+| `"most-recent"`     | `max(addedAt, lastOpenedAt ?? 0)` desc              | id asc                  |
+| `"title-asc"`       | title (case-insensitive) asc                        | author (ci) asc, id asc |
+| `"author-asc"`      | author (ci) asc                                     | title (ci) asc, id asc  |
+| `"most-completed"`  | `(currentPage / totalPages)` desc; never-opened = 0 | title (ci) asc, id asc  |
+| `"date-added-desc"` | `addedAt` desc                                      | id asc                  |
 
 Notes:
 

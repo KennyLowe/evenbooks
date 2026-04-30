@@ -29,7 +29,7 @@ What's explicitly **out** of v3:
 
 The phone remains authoritative for all state; the glasses are a derived viewport (constitution Principle III).
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 — Delete an imported book (Priority: P1)
 
@@ -100,7 +100,7 @@ A user with many books types into a small search box and the visible library nar
 - **Delete the same book twice rapidly**: the second confirmation is impossible because the entry is gone from the list; defensive guard in the delete-handler ensures the second invocation is a no-op rather than throwing.
 - **Storage write failure during delete**: per Constitution Principle V, the failure surfaces a notice; the in-memory library is rolled back to its pre-delete state if the persist failed.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 Functional requirements describe **what** the user can do. Numbers (latencies, percentages, durations) live in Success Criteria, not here.
 
@@ -143,7 +143,7 @@ Functional requirements describe **what** the user can do. Numbers (latencies, p
 - **SortOption** (new enum): `"most-recent" | "title-asc" | "author-asc" | "most-completed" | "date-added-desc"`.
 - **Book**, **LibraryEntry**, **Library**, **ReadingPosition** — carry forward unchanged from v2.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 Numbers below are provisional v3 targets, validated in the simulator and revisited after the first hardware-validation pass per the constitution's "What we don't yet know" section.
 

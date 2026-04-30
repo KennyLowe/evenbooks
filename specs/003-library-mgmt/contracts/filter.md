@@ -27,11 +27,11 @@ applyFilter(sortedEntries, query)
 ## Examples
 
 ```ts
-applyFilter(entries, "")          // ⇒ entries (unchanged)
-applyFilter(entries, "  ")        // ⇒ entries (whitespace counts as empty)
-applyFilter(entries, "POE")       // ⇒ all entries by Edgar Allan Poe (case-insensitive)
-applyFilter(entries, "tell")      // ⇒ "The Tell-Tale Heart"
-applyFilter(entries, "X.Y.Z.")    // ⇒ literal substring match (no regex interpretation)
+applyFilter(entries, ""); // ⇒ entries (unchanged)
+applyFilter(entries, "  "); // ⇒ entries (whitespace counts as empty)
+applyFilter(entries, "POE"); // ⇒ all entries by Edgar Allan Poe (case-insensitive)
+applyFilter(entries, "tell"); // ⇒ "The Tell-Tale Heart"
+applyFilter(entries, "X.Y.Z."); // ⇒ literal substring match (no regex interpretation)
 ```
 
 ## Properties

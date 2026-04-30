@@ -6,10 +6,10 @@ Adds three small types to v2. Existing types (`Book`, `LibraryEntry`, `Library`,
 
 ```ts
 export type SortOption =
-  | "most-recent"      // v2 default — max(addedAt, lastOpenedAt)
+  | "most-recent" // v2 default — max(addedAt, lastOpenedAt)
   | "title-asc"
   | "author-asc"
-  | "most-completed"   // currentPage / totalPages, desc
+  | "most-completed" // currentPage / totalPages, desc
   | "date-added-desc";
 ```
 
@@ -64,12 +64,12 @@ The v1 reader state machine is unchanged. The **active-book ↔ delete coordinat
 
 ## Storage layout (full picture, v3)
 
-| Layer | Key / Object | Shape | Change in v3 |
-|---|---|---|---|
-| `bridge.setLocalStorage` | `evenBooks.library.v2` | `Library` JSON | unchanged |
-| `bridge.setLocalStorage` | `evenBooks.position.<bookId>` | `ReadingPosition` JSON | unchanged; cleared on delete |
-| `bridge.setLocalStorage` | `evenBooks.settings.v3` | `LibrarySettings` JSON | **new** |
-| WebView IndexedDB | DB `evenBooks`, store `books`, key `BookId` | `{ text, pages, storedAt }` | unchanged; record removed on delete |
+| Layer                    | Key / Object                                | Shape                       | Change in v3                        |
+| ------------------------ | ------------------------------------------- | --------------------------- | ----------------------------------- |
+| `bridge.setLocalStorage` | `evenBooks.library.v2`                      | `Library` JSON              | unchanged                           |
+| `bridge.setLocalStorage` | `evenBooks.position.<bookId>`               | `ReadingPosition` JSON      | unchanged; cleared on delete        |
+| `bridge.setLocalStorage` | `evenBooks.settings.v3`                     | `LibrarySettings` JSON      | **new**                             |
+| WebView IndexedDB        | DB `evenBooks`, store `books`, key `BookId` | `{ text, pages, storedAt }` | unchanged; record removed on delete |
 
 No migration needed from v2 → v3: settings is a brand-new key (absent on first v3 launch → default is used silently). The library index, position keys, and IndexedDB content are all schema-compatible with v2.
 

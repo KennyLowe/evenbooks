@@ -43,9 +43,7 @@ describe("applyFilter", () => {
   it("matches a substring spanning title and author concatenation", () => {
     // "Tale Heart Edgar" — appears in the concatenated string for entry a
     // (well, "Heart Edgar" certainly does once we join with a space).
-    expect(applyFilter(entries, "Heart Edgar").map((e) => e.id)).toEqual([
-      "a",
-    ]);
+    expect(applyFilter(entries, "Heart Edgar").map((e) => e.id)).toEqual(["a"]);
   });
 
   it("treats regex-special characters as literal", () => {

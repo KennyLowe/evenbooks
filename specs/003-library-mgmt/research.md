@@ -23,8 +23,8 @@ Per-option rules:
 
 **Alternatives**:
 
-- *Inline comparators in the UI* — couples sort logic to the renderer, makes unit tests awkward. Rejected.
-- *Class-based comparators* — overkill for v3's five options; pure functions are simpler and faster.
+- _Inline comparators in the UI_ — couples sort logic to the renderer, makes unit tests awkward. Rejected.
+- _Class-based comparators_ — overkill for v3's five options; pure functions are simpler and faster.
 
 ---
 
@@ -68,9 +68,9 @@ deleteBook(id):
 
 **Alternatives**:
 
-- *Two-phase commit* — overkill for three independent storage operations on a single device.
-- *Reverse order (IndexedDB first)* — leads to inferior recovery state on partial failure (see above).
-- *All-three-fire-and-forget* — could leave the library entry visible while content is gone, producing a confusing tap experience. Rejected.
+- _Two-phase commit_ — overkill for three independent storage operations on a single device.
+- _Reverse order (IndexedDB first)_ — leads to inferior recovery state on partial failure (see above).
+- _All-three-fire-and-forget_ — could leave the library entry visible while content is gone, producing a confusing tap experience. Rejected.
 
 ---
 
@@ -94,10 +94,10 @@ Computed on every render. At design point ≤ 50 entries this is negligible (< 0
 
 **Alternatives**:
 
-- *Regex match* — exposes regex-injection footguns. Rejected (Spec FR-013 explicitly forbids).
-- *Fuzzy match* (Levenshtein, fzf-style) — meaningful only for libraries 100+ items. Rejected for v3 design point.
-- *Title-only match* — author search is genuinely useful. Rejected.
-- *Pre-built index* — overkill at ≤ 50 entries.
+- _Regex match_ — exposes regex-injection footguns. Rejected (Spec FR-013 explicitly forbids).
+- _Fuzzy match_ (Levenshtein, fzf-style) — meaningful only for libraries 100+ items. Rejected for v3 design point.
+- _Title-only match_ — author search is genuinely useful. Rejected.
+- _Pre-built index_ — overkill at ≤ 50 entries.
 
 ---
 
@@ -117,8 +117,8 @@ Read on bootstrap (after migration, before the first library render). On parse f
 
 **Alternatives**:
 
-- *Inline into library index* — couples settings churn to library churn. Rejected.
-- *IndexedDB-only* — adds a transaction for trivially small data. Rejected.
+- _Inline into library index_ — couples settings churn to library churn. Rejected.
+- _IndexedDB-only_ — adds a transaction for trivially small data. Rejected.
 
 ---
 
@@ -132,9 +132,9 @@ Read on bootstrap (after migration, before the first library render). On parse f
 
 **Alternatives**:
 
-- *Native `<dialog>`* — viable; can be added in a follow-on if we want to drop the custom overlay code.
-- *No confirmation* — violates spec FR-002. Rejected.
-- *Inline confirm button (slide-in undo)* — adds an undo concept; spec explicitly defers undo to a future spec. Rejected.
+- _Native `<dialog>`_ — viable; can be added in a follow-on if we want to drop the custom overlay code.
+- _No confirmation_ — violates spec FR-002. Rejected.
+- _Inline confirm button (slide-in undo)_ — adds an undo concept; spec explicitly defers undo to a future spec. Rejected.
 
 ---
 
@@ -148,9 +148,9 @@ Read on bootstrap (after migration, before the first library render). On parse f
 
 **Alternatives**:
 
-- *Cancel in-flight saves* — `bridge.setLocalStorage` doesn't expose cancellation. Rejected.
-- *Accept the orphan and clean it up later* — works, but adds noise on the next load (an unexpected position key for an entry that doesn't exist). Rejected.
-- *Tombstone forever* — leaks; not necessary because re-imports get a fresh save once the user resumes reading. The 1 s window is enough.
+- _Cancel in-flight saves_ — `bridge.setLocalStorage` doesn't expose cancellation. Rejected.
+- _Accept the orphan and clean it up later_ — works, but adds noise on the next load (an unexpected position key for an entry that doesn't exist). Rejected.
+- _Tombstone forever_ — leaks; not necessary because re-imports get a fresh save once the user resumes reading. The 1 s window is enough.
 
 ---
 
@@ -172,25 +172,25 @@ Read on bootstrap (after migration, before the first library render). On parse f
 
 Step 2 is awaited before step 3 starts. This ensures the glasses don't render a "ghost" of a book whose content is about to vanish.
 
-**Rationale**: Honours Constitution Principle V (no surprises, no silent state corruption). The user sees the reader exit cleanly *before* the entry disappears, mirroring the natural mental model.
+**Rationale**: Honours Constitution Principle V (no surprises, no silent state corruption). The user sees the reader exit cleanly _before_ the entry disappears, mirroring the natural mental model.
 
 **Alternatives**:
 
-- *Delete first, then exit reader* — leaves a brief window where the glasses display references state that no longer exists in the library; if any reconnect or page-change happens during that window, the reader could try to load content from a deleted IndexedDB record. Rejected.
-- *Refuse to delete the active book* — over-conservative; the user has the right to delete what they want.
+- _Delete first, then exit reader_ — leaves a brief window where the glasses display references state that no longer exists in the library; if any reconnect or page-change happens during that window, the reader could try to load content from a deleted IndexedDB record. Rejected.
+- _Refuse to delete the active book_ — over-conservative; the user has the right to delete what they want.
 
 ---
 
 ## Summary table
 
-| ID | Topic | Decision |
-|---|---|---|
-| R1 | Sort comparators | `comparatorFor(option)` factory in library-entry.ts; 5 pure comparators |
-| R2 | Delete order | Library → position-key → IndexedDB; rollback only on step 1 fail |
-| R3 | Filter | Pure substring match on `(title + " " + author).toLowerCase()` |
-| R4 | Settings storage | `evenBooks.settings.v3` KV key; recover-with-notice on parse failure |
-| R5 | Confirmation dialog | Handcoded overlay with focus trap; not native `<dialog>` |
-| R6 | Delete vs in-flight save | 1 s tombstone window; pending writes for tombstoned ids drop silently |
-| R7 | Delete-while-reading | Reader exit fully resolves before storage cleanup begins |
+| ID  | Topic                    | Decision                                                                |
+| --- | ------------------------ | ----------------------------------------------------------------------- |
+| R1  | Sort comparators         | `comparatorFor(option)` factory in library-entry.ts; 5 pure comparators |
+| R2  | Delete order             | Library → position-key → IndexedDB; rollback only on step 1 fail        |
+| R3  | Filter                   | Pure substring match on `(title + " " + author).toLowerCase()`          |
+| R4  | Settings storage         | `evenBooks.settings.v3` KV key; recover-with-notice on parse failure    |
+| R5  | Confirmation dialog      | Handcoded overlay with focus trap; not native `<dialog>`                |
+| R6  | Delete vs in-flight save | 1 s tombstone window; pending writes for tombstoned ids drop silently   |
+| R7  | Delete-while-reading     | Reader exit fully resolves before storage cleanup begins                |
 
 All NEEDS CLARIFICATION items resolved. Phase 1 design proceeds.

@@ -44,16 +44,16 @@ The technical approach extends v2 minimally: a new `library-settings.ts` module 
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design._
 
-| Principle | Verdict | Evidence in plan |
-|---|---|---|
-| **I. Every Frame Is Glanceable (NN)** | ✅ Pass | Zero glasses-side surface added. The reader is gracefully torn down if the active book is being deleted (FR-006); no new glasses frames. |
-| **II. Data Minimalism** | ✅ Pass | Delete *reduces* storage (removes a library entry, a position key, and an IndexedDB record). New `evenBooks.settings.v3` key is < 50 bytes. No new sensors or network. |
-| **III. Phone Is the Brain, Glasses Are the Lens** | ✅ Pass | Library state, sort, filter, delete all phone-side. Glasses display is unaffected unless the active book is being deleted, in which case the standard reader teardown runs first. |
-| **IV. Battery and Bandwidth Are Sacred** | ✅ Pass | No new BLE traffic. No new IMU or audio. Settings write is once-per-sort-change; library write is once-per-mutation (matches v2). |
-| **V. Crash Without Lying** | ✅ Pass | Delete is a coordinated three-step operation with rollback (FR-003) and notice-on-failure (R1). Sort/filter failures (parse errors on stored settings) recover to the v2 default and surface a recovery notice. |
-| **VI. Simulator-First, Hardware-Verified** | ✅ Pass | Delete + sort + filter are all phone-side and fully testable in the simulator. Hardware-validation is unchanged from v2 (the read loop is untouched). |
+| Principle                                         | Verdict | Evidence in plan                                                                                                                                                                                                |
+| ------------------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **I. Every Frame Is Glanceable (NN)**             | ✅ Pass | Zero glasses-side surface added. The reader is gracefully torn down if the active book is being deleted (FR-006); no new glasses frames.                                                                        |
+| **II. Data Minimalism**                           | ✅ Pass | Delete _reduces_ storage (removes a library entry, a position key, and an IndexedDB record). New `evenBooks.settings.v3` key is < 50 bytes. No new sensors or network.                                          |
+| **III. Phone Is the Brain, Glasses Are the Lens** | ✅ Pass | Library state, sort, filter, delete all phone-side. Glasses display is unaffected unless the active book is being deleted, in which case the standard reader teardown runs first.                               |
+| **IV. Battery and Bandwidth Are Sacred**          | ✅ Pass | No new BLE traffic. No new IMU or audio. Settings write is once-per-sort-change; library write is once-per-mutation (matches v2).                                                                               |
+| **V. Crash Without Lying**                        | ✅ Pass | Delete is a coordinated three-step operation with rollback (FR-003) and notice-on-failure (R1). Sort/filter failures (parse errors on stored settings) recover to the v2 default and surface a recovery notice. |
+| **VI. Simulator-First, Hardware-Verified**        | ✅ Pass | Delete + sort + filter are all phone-side and fully testable in the simulator. Hardware-validation is unchanged from v2 (the read loop is untouched).                                                           |
 
 **SDK invariants**: all preserved from v1/v2. No new SDK calls.
 
@@ -123,8 +123,8 @@ evenBooks/
 > Empty. The Constitution Check passes without violations.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| _(none)_ | — | — |
+| --------- | ---------- | ------------------------------------ |
+| _(none)_  | —          | —                                    |
 
 ## Phase 0 — Research
 

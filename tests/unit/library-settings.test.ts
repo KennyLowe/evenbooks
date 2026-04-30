@@ -5,10 +5,7 @@ import {
   loadSettings,
   saveSettings,
 } from "../../src/library/library-settings";
-import {
-  createNoticeChannel,
-  type Notice,
-} from "../../src/platform/errors";
+import { createNoticeChannel, type Notice } from "../../src/platform/errors";
 
 interface Store {
   [key: string]: string;

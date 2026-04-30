@@ -12,11 +12,7 @@
 import type { EvenAppBridge } from "@evenrealities/even_hub_sdk";
 import type { NoticeChannel } from "./errors";
 import type { BookId } from "../content/sample-text";
-import {
-  removeEntry,
-  saveLibrary,
-  type Library,
-} from "../library/library";
+import { removeEntry, saveLibrary, type Library } from "../library/library";
 import { positionKeyFor, tombstone } from "./persistence";
 import { deleteBookContent } from "./book-store";
 

@@ -83,7 +83,9 @@ export function confirmDelete(params: ConfirmDeleteParams): Promise<boolean> {
       // Minimal focus trap: if Tab would leave the dialog, send focus back.
       if (event.key === "Tab") {
         const focusables = [cancelBtn, confirmBtn];
-        const idx = focusables.indexOf(document.activeElement as HTMLButtonElement);
+        const idx = focusables.indexOf(
+          document.activeElement as HTMLButtonElement,
+        );
         if (event.shiftKey) {
           if (idx <= 0) {
             event.preventDefault();
