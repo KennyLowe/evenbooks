@@ -9,12 +9,15 @@
  * single spaces; paragraph boundaries preserved as \n\n; HTML entities decoded.
  */
 
-export type BookId = "sample";
+export type BookId = "sample" | string;
+
+export type BookFormat = "bundled" | "epub" | "text";
 
 export interface Book {
   readonly id: BookId;
   readonly title: string;
   readonly author: string;
+  readonly format: BookFormat;
   readonly text: string;
 }
 
@@ -22,6 +25,7 @@ export const SAMPLE_BOOK: Book = {
   id: "sample",
   title: "The Tell-Tale Heart",
   author: "Edgar Allan Poe",
+  format: "bundled",
   text: `True!—nervous—very, very dreadfully nervous I had been and am; but why will you say that I am mad? The disease had sharpened my senses—not destroyed—not dulled them. Above all was the sense of hearing acute. I heard all things in the heaven and in the earth. I heard many things in hell. How, then, am I mad? Hearken! and observe how healthily—how calmly I can tell you the whole story.
 
 It is impossible to say how first the idea entered my brain; but once conceived, it haunted me day and night. Object there was none. Passion there was none. I loved the old man. He had never wronged me. He had never given me insult. For his gold I had no desire. I think it was his eye! yes, it was this! He had the eye of a vulture—a pale blue eye, with a film over it. Whenever it fell upon me, my blood ran cold; and so by degrees—very gradually—I made up my mind to take the life of the old man, and thus rid myself of the eye forever.
