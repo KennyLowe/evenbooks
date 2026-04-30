@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+*.ehpk
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.local
+.vite/
+
+# Agent / IDE workspace state — local only, not part of the project artifact.
+.claude/
+.vscode/
+.idea/
