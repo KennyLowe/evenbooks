@@ -83,7 +83,7 @@ describe("importFile — pre-flight refusals", () => {
   });
 
   it("unsupported extension → failure(unsupported-format)", async () => {
-    const file = makeFile(new ArrayBuffer(8), "doc.pdf");
+    const file = makeFile(new ArrayBuffer(8), "doc.azw3");
     const out = await importFile(file, emptyLibrary(), createNoticeChannel());
     expect(out).toEqual({ kind: "failure", reason: "unsupported-format" });
   });

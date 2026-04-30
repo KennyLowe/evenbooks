@@ -11,7 +11,7 @@
 
 export type BookId = "sample" | string;
 
-export type BookFormat = "bundled" | "epub" | "text";
+export type BookFormat = "bundled" | "epub" | "text" | "pdf";
 
 export interface Book {
   readonly id: BookId;

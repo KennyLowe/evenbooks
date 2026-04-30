@@ -17,6 +17,7 @@ export type ImportFailureReason =
   | "oversize"
   | "unsupported-encoding"
   | "empty"
+  | "image-only-pdf"
   | "storage-full";
 
 export type ImportOutcome =
@@ -34,12 +35,14 @@ const FAILURE_MESSAGES: Record<ImportFailureReason, string> = {
   malformed:
     "Couldn't read this file. It may be damaged or in an unsupported format.",
   "unsupported-format":
-    "evenBooks supports DRM-free EPUB and plain-text (.txt) files only.",
+    "evenBooks supports DRM-free EPUB, plain-text (.txt), and PDF files only.",
   oversize:
     "This file is larger than evenBooks supports right now (max 50 MB).",
   "unsupported-encoding":
     "Unsupported text encoding — please save the file as UTF-8.",
   empty: "This book has no readable content.",
+  "image-only-pdf":
+    "This PDF appears to be image-only (scanned). evenBooks needs text-based PDFs.",
   "storage-full": "Couldn't save this book — your phone may be out of space.",
 };
 
