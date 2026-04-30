@@ -4,9 +4,11 @@
 
 An ebook reader for the Even Realities G2 smart glasses. Built spec-first.
 
-**v3** adds library management on top of v2's import: per-entry delete (with confirmation), five sort orders (most recent / title / author / progress / date added — persisted across sessions), and a per-session text filter. The bundled sample ("The Tell-Tale Heart" by Edgar Allan Poe, public domain) remains permanently. The reading experience on the glasses is unchanged from v1: single press advances, double press retreats, swipe down exits.
+**v4** adds PDF import alongside the existing EPUB and plain-text formats. PDFs are parsed with `pdfjs-dist` loaded only when a `.pdf` is picked, so the main bundle stays small. Text extraction walks PDF text content per page, groups items by Y-coordinate into lines, and applies a line-unwrap heuristic (un-hyphenate, sentence-break, soft-merge). DRM/password-protected and image-only PDFs are detected and refused with clear messages. Image-only detection uses a per-page text-density threshold.
 
-DRM-protected EPUBs are detected and refused with a clear message. Embedded images are skipped silently. The reader is text-only by design.
+**v3** added library management on top of v2's import: per-entry delete (with confirmation), five sort orders (most recent / title / author / progress / date added — persisted across sessions), and a per-session text filter. The bundled sample ("The Tell-Tale Heart" by Edgar Allan Poe, public domain) remains permanently. The reading experience on the glasses is unchanged from v1: single press advances, double press retreats, swipe down exits.
+
+DRM-protected EPUBs and PDFs are detected and refused with a clear message. Embedded images are skipped silently. The reader is text-only by design.
 
 ## Run
 
@@ -42,12 +44,21 @@ Tests cover pagination, the reader state machine, frame composers, persistence +
 
 ```bash
 npm run build
-node node_modules/@evenrealities/evenhub-cli/main.js pack app.json dist -o evenBooks-0.3.0.ehpk
+node node_modules/@evenrealities/evenhub-cli/main.js pack app.json dist -o evenBooks-0.4.0.ehpk
 ```
 
 ## Where to read more
 
-### v3 (current — library management)
+### v4 (current — PDF import)
+
+- **Spec** — `specs/004-pdf-import/spec.md`
+- **Plan** — `specs/004-pdf-import/plan.md`
+- **Research** — `specs/004-pdf-import/research.md` (R1–R6: pdfjs-dist choice, line-unwrap heuristic, image-only detection threshold, encryption detection, worker strategy, pdf-lib fixtures)
+- **Data model** — `specs/004-pdf-import/data-model.md`
+- **Contracts** — `specs/004-pdf-import/contracts/pdf-parse.md`
+- **Quickstart** — `specs/004-pdf-import/quickstart.md`
+
+### v3 (library management)
 
 - **Spec** — `specs/003-library-mgmt/spec.md`
 - **Plan** — `specs/003-library-mgmt/plan.md`

@@ -26,7 +26,7 @@ import { textImport } from "./text-import";
 import type { ImportOutcome } from "./outcomes";
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50 MB cap (Spec Assumption 6).
-const ALLOWED_EXTENSIONS = new Set(["epub", "txt"]);
+const ALLOWED_EXTENSIONS = new Set(["epub", "txt", "pdf"]);
 
 export async function importFile(
   file: File,
@@ -52,7 +52,7 @@ export async function importFile(
 
   // Stage 3: Parse.
   let parsed: {
-    format: "epub" | "text";
+    format: "epub" | "text" | "pdf";
     title: string;
     author: string;
     text: string;
@@ -61,6 +61,16 @@ export async function importFile(
 
   if (extension === "epub") {
     const result = await epubParse(buffer, file.name);
+    if ("kind" in result) {
+      return { kind: "failure", reason: result.kind };
+    }
+    parsed = result;
+    id = await hashFileBytes(buffer);
+  } else if (extension === "pdf") {
+    // Lazy-import the PDF parser so pdfjs-dist is only fetched when the
+    // user actually picks a .pdf (Phase 0 R1).
+    const { pdfParse } = await import("./pdf");
+    const result = await pdfParse(buffer, file.name);
     if ("kind" in result) {
       return { kind: "failure", reason: result.kind };
     }

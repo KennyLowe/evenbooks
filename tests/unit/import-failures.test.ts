@@ -6,6 +6,7 @@ import { emptyLibrary, type Library } from "../../src/library/library";
 import { _resetForTests, getBookContent } from "../../src/platform/book-store";
 import { createNoticeChannel, type Notice } from "../../src/platform/errors";
 import { buildMinimalEpub, buildTxtFile } from "./_fixtures";
+import { buildImageOnlyPdf } from "./_pdf-fixtures";
 
 function makeFile(buffer: ArrayBuffer, name: string): File {
   return new File([buffer], name, { type: "application/octet-stream" });
@@ -34,8 +35,8 @@ describe("importFile — typed refusals (Spec FR-015 / SC-004)", () => {
     expect(lib).toEqual(emptyLibrary());
   });
 
-  it("unsupported extension .pdf → failure(unsupported-format)", async () => {
-    const file = makeFile(new ArrayBuffer(8), "doc.pdf");
+  it("unsupported extension .azw3 → failure(unsupported-format)", async () => {
+    const file = makeFile(new ArrayBuffer(8), "doc.azw3");
     const out = await importFile(file, emptyLibrary(), createNoticeChannel());
     expect(out).toEqual({ kind: "failure", reason: "unsupported-format" });
   });
@@ -100,6 +101,32 @@ describe("importFile — typed refusals (Spec FR-015 / SC-004)", () => {
     expect(out).toEqual({ kind: "failure", reason: "empty" });
   });
 
+  it("image-only PDF → failure(image-only-pdf)", async () => {
+    const buf = await buildImageOnlyPdf();
+    const file = makeFile(buf, "scan.pdf");
+    const out = await importFile(file, emptyLibrary(), createNoticeChannel());
+    expect(out).toEqual({ kind: "failure", reason: "image-only-pdf" });
+  });
+
+  it("non-PDF content with .pdf extension → failure(malformed)", async () => {
+    const buf = new TextEncoder().encode("This is not a PDF.").buffer;
+    const file = makeFile(buf, "fake.pdf");
+    const out = await importFile(file, emptyLibrary(), createNoticeChannel());
+    expect(out).toMatchObject({ kind: "failure", reason: "malformed" });
+  });
+
+  it("oversize PDF → failure(oversize); parser never invoked", async () => {
+    const big = new Uint8Array(51 * 1024 * 1024).buffer;
+    const file = makeFile(big, "huge.pdf");
+    const out = await importFile(file, emptyLibrary(), createNoticeChannel());
+    expect(out).toEqual({ kind: "failure", reason: "oversize" });
+  });
+
+  // Note: a reliable synthetic encrypted-PDF fixture needs real RC4/AES
+  // encryption tables that pdf-lib (v1.17) doesn't produce. The DRM refusal
+  // path is verified by code review in src/import/pdf.ts (isPasswordException)
+  // and end-to-end against a real password-protected PDF in manual QA.
+
   it("storage-full (IndexedDB throws) → failure(storage-full); transient save-failed notice emitted", async () => {
     // Spy on putBookContent by mocking the module.
     const channel = createNoticeChannel();
@@ -131,7 +158,7 @@ describe("importFile — library unchanged on every failure", () => {
   beforeEach(() => _resetForTests());
 
   it.each([
-    ["unsupported-format", () => makeFile(new ArrayBuffer(8), "x.pdf")],
+    ["unsupported-format", () => makeFile(new ArrayBuffer(8), "x.azw3")],
     [
       "oversize",
       () => makeFile(new Uint8Array(51 * 1024 * 1024).buffer, "x.epub"),
