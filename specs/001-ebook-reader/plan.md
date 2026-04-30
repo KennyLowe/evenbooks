@@ -14,6 +14,7 @@ The technical approach commits to: `textContainerUpgrade` for in-shape page tran
 
 **Language/Version**: TypeScript 5.7 with `strict: true`. Target: ES2022 (matches Vite default for the WebView host).
 **Primary Dependencies**:
+
 - `@evenrealities/even_hub_sdk` ^0.0.10 — Even Hub SDK (`waitForEvenAppBridge`, `EvenAppBridge`, container types, event types, enums).
 - `@evenrealities/evenhub-cli` ^0.1.12 (dev) — `evenhub pack` / `evenhub validate` / `evenhub qr`.
 - `@evenrealities/evenhub-simulator` ^0.7.2 (dev) — desktop simulator.
@@ -24,40 +25,42 @@ No EPUB parser. No state library. No UI framework. The bundled sample text is a 
 
 **Storage**: Companion-app key-value store via `bridge.setLocalStorage` / `bridge.getLocalStorage`. Single key `"evenBooks.position.v1"`, value is a JSON string `{"book":"sample","page":N,"savedAt":<ms>}`. See `contracts/persistence.md`.
 **Testing**:
+
 - Pure-logic unit tests via Vitest for `pagination.ts` and `reader.ts` (Constitution Principle VI; encouraged for solo).
 - Manual integration runs against `evenhub-simulator` for the read loop (mandatory per Principle VI).
-- Headless simulator test for the read loop is *encouraged* but not blocking for solo v1; if added, lives in `tests/integration/`.
-**Target Platform**: Even Hub plugin (web app inside the Even Realities companion app's WebView, on iOS / Android phones), driving an Even G2 display over BLE 5.2. `min_sdk_version: "0.0.10"`, `min_app_version: "2.0.0"` per the official `minimal` template.
-**Project Type**: Single-project Even Hub plugin. Scaffold copied from `official/evenhub-templates/minimal`.
-**Performance Goals** (provisional, simulator-tested; revisit on hardware per spec Risks):
+- Headless simulator test for the read loop is _encouraged_ but not blocking for solo v1; if added, lives in `tests/integration/`.
+  **Target Platform**: Even Hub plugin (web app inside the Even Realities companion app's WebView, on iOS / Android phones), driving an Even G2 display over BLE 5.2. `min_sdk_version: "0.0.10"`, `min_app_version: "2.0.0"` per the official `minimal` template.
+  **Project Type**: Single-project Even Hub plugin. Scaffold copied from `official/evenhub-templates/minimal`.
+  **Performance Goals** (provisional, simulator-tested; revisit on hardware per spec Risks):
 - Page change feels instant — provisional ≤500 ms in simulator.
 - Launch to first rendered page within 2 s.
 - 30-minute continuous session without crash, lost input, or position drift.
-**Constraints**:
+  **Constraints**:
 - 576 × 288 px, 4-bit greyscale, monochrome-native design (Constitution Principle I).
 - Exactly one text container per page with `isEventCapture: 1` (SDK invariant).
 - `textContainerUpgrade` payload ≤ 2000 chars; `TextContainerProperty.content` ≤ 1000 chars on creation.
 - Phone is authoritative; glasses display is rebuilt from phone state on reconnect (Constitution Principle III).
 - Fully offline at runtime — no network calls.
 - All errors either recover with a user-visible recovery or surface as a discreet status (Constitution Principle V).
-**Scale/Scope**: One book of ~2,000–5,000 words, ~30–50 paginated pages. Single user, single device. One reading session at a time.
+  **Scale/Scope**: One book of ~2,000–5,000 words, ~30–50 paginated pages. Single user, single device. One reading session at a time.
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design._
 
 Constitution v3.0.0 has one **NON-NEGOTIABLE** principle (I) and five soft principles (II–VI). Each is evaluated against this plan:
 
-| Principle | Verdict | Evidence in plan |
-|---|---|---|
-| **I. Every Frame Is Glanceable (NN)** | ✅ Pass | Each rendered page is one glanceable frame. No within-frame scrolling. Multi-page is user-paced (single press / double press); auto-advance is forbidden by spec FR-002/003. End-of-book and clamp frames are designed monochrome-native (text-only on a 4-bit canvas). Body text is the top-left primary information; no chrome competes (FR-001). |
-| **II. Data Minimalism** | ✅ Pass | No microphone, no IMU, no network. The only persisted datum is an integer page index plus a book identifier; total payload < 100 bytes. No sensors beyond the touchpad. |
-| **III. Phone Is the Brain, Glasses Are the Lens** | ✅ Pass | All state (current page, paginated content, connection state) lives in the phone-side WebView. Glasses display is rebuilt from phone state on every page change and on reconnect (Phase 1 design: `frames.ts` is a pure function from `(book, pageIndex)` to a `textContainerUpgrade` payload). Idempotent: re-issuing the same upgrade is a no-op. Reconnect handler issues a full re-render of the current page. |
-| **IV. Battery and Bandwidth Are Sacred** | ✅ Pass | Page changes use `textContainerUpgrade` (in-shape, flicker-free per docs) rather than `rebuildPageContainer`. Only one container in the entire app; layout never changes. No coalescing needed (page changes are bounded by human input speed). All event subscriptions tracked in a teardown registry; unsubscribed on `FOREGROUND_EXIT_EVENT` and on swipe-down exit. No `imuControl` or `audioControl` calls. |
-| **V. Crash Without Lying** | ✅ Pass | FR-008 surfaces ground-truth connection state on the phone. Persistence-corruption recovery (Phase 0 R6 below): on read, if the stored value is missing or unparseable, default to page 1 AND surface a one-time "could not restore previous position" indicator on the phone-side UI. Save failure: caught, page index kept in-memory, surfaced via the same channel. Logging-and-swallowing is forbidden by the catch-block convention defined in Phase 1 `platform/errors.ts`. |
-| **VI. Simulator-First, Hardware-Verified** | ✅ Pass (with documented hardware-only items) | Simulator is the primary dev loop. User Story 1's Independent Test runs in simulator first. Pure-logic tests via Vitest cover pagination. Hardware-only items (R1–R5 from spec) are explicitly tagged in Phase 0 research and will be re-evaluated after the first hardware session — no provisional numbers in the SC are treated as commitments. |
+| Principle                                         | Verdict                                       | Evidence in plan                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **I. Every Frame Is Glanceable (NN)**             | ✅ Pass                                       | Each rendered page is one glanceable frame. No within-frame scrolling. Multi-page is user-paced (single press / double press); auto-advance is forbidden by spec FR-002/003. End-of-book and clamp frames are designed monochrome-native (text-only on a 4-bit canvas). Body text is the top-left primary information; no chrome competes (FR-001).                                                                                                                               |
+| **II. Data Minimalism**                           | ✅ Pass                                       | No microphone, no IMU, no network. The only persisted datum is an integer page index plus a book identifier; total payload < 100 bytes. No sensors beyond the touchpad.                                                                                                                                                                                                                                                                                                           |
+| **III. Phone Is the Brain, Glasses Are the Lens** | ✅ Pass                                       | All state (current page, paginated content, connection state) lives in the phone-side WebView. Glasses display is rebuilt from phone state on every page change and on reconnect (Phase 1 design: `frames.ts` is a pure function from `(book, pageIndex)` to a `textContainerUpgrade` payload). Idempotent: re-issuing the same upgrade is a no-op. Reconnect handler issues a full re-render of the current page.                                                                |
+| **IV. Battery and Bandwidth Are Sacred**          | ✅ Pass                                       | Page changes use `textContainerUpgrade` (in-shape, flicker-free per docs) rather than `rebuildPageContainer`. Only one container in the entire app; layout never changes. No coalescing needed (page changes are bounded by human input speed). All event subscriptions tracked in a teardown registry; unsubscribed on `FOREGROUND_EXIT_EVENT` and on swipe-down exit. No `imuControl` or `audioControl` calls.                                                                  |
+| **V. Crash Without Lying**                        | ✅ Pass                                       | FR-008 surfaces ground-truth connection state on the phone. Persistence-corruption recovery (Phase 0 R6 below): on read, if the stored value is missing or unparseable, default to page 1 AND surface a one-time "could not restore previous position" indicator on the phone-side UI. Save failure: caught, page index kept in-memory, surfaced via the same channel. Logging-and-swallowing is forbidden by the catch-block convention defined in Phase 1 `platform/errors.ts`. |
+| **VI. Simulator-First, Hardware-Verified**        | ✅ Pass (with documented hardware-only items) | Simulator is the primary dev loop. User Story 1's Independent Test runs in simulator first. Pure-logic tests via Vitest cover pagination. Hardware-only items (R1–R5 from spec) are explicitly tagged in Phase 0 research and will be re-evaluated after the first hardware session — no provisional numbers in the SC are treated as commitments.                                                                                                                                |
 
 **SDK invariants** (from constitution Hardware & SDK Invariants section): all respected.
+
 - One container, ≤12 total: ✅ (1 text container).
 - Exactly one `isEventCapture: 1`: ✅.
 - `createStartUpPageContainer` called once: ✅ (in `bootstrap()` in `main.ts`).
@@ -125,8 +128,8 @@ evenBooks/
 > Empty. The Constitution Check passes without violations and there is no Complexity Tracking entry to justify.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| _(none)_ | — | — |
+| --------- | ---------- | ------------------------------------ |
+| _(none)_  | —          | —                                    |
 
 ## Phase 0 — Research
 
@@ -143,6 +146,7 @@ See `research.md` for the full research log. Items resolved:
 ## Phase 1 — Design & Contracts
 
 See:
+
 - `data-model.md` — entity definitions for Book, Page, ReadingPosition, plus the in-memory ReaderState reducer model.
 - `contracts/persistence.md` — storage key, value JSON shape, versioning, recovery behavior.
 - `contracts/frames.md` — glasses frame composition: `TextContainerProperty` for startup, `TextContainerUpgrade` payload shapes for normal page / end-of-book / clamp-flash.

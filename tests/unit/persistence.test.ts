@@ -31,7 +31,11 @@ describe("readPosition", () => {
   it("returns recovered/unparseable for garbage", async () => {
     const bridge = fakeBridge("not json {{{");
     const result = await readPosition(bridge as never, "sample", 45);
-    expect(result).toEqual({ kind: "recovered", page: 0, reason: "unparseable" });
+    expect(result).toEqual({
+      kind: "recovered",
+      page: 0,
+      reason: "unparseable",
+    });
   });
 
   it("returns recovered/wrong-book for a different book id", async () => {
@@ -39,7 +43,11 @@ describe("readPosition", () => {
       JSON.stringify({ book: "other", page: 5, savedAt: Date.now() }),
     );
     const result = await readPosition(bridge as never, "sample", 45);
-    expect(result).toEqual({ kind: "recovered", page: 0, reason: "wrong-book" });
+    expect(result).toEqual({
+      kind: "recovered",
+      page: 0,
+      reason: "wrong-book",
+    });
   });
 
   it("returns recovered/out-of-range for negative page", async () => {
@@ -47,7 +55,11 @@ describe("readPosition", () => {
       JSON.stringify({ book: "sample", page: -1, savedAt: Date.now() }),
     );
     const result = await readPosition(bridge as never, "sample", 45);
-    expect(result).toEqual({ kind: "recovered", page: 0, reason: "out-of-range" });
+    expect(result).toEqual({
+      kind: "recovered",
+      page: 0,
+      reason: "out-of-range",
+    });
   });
 
   it("returns recovered/out-of-range for page === totalPages", async () => {
@@ -55,7 +67,11 @@ describe("readPosition", () => {
       JSON.stringify({ book: "sample", page: 45, savedAt: Date.now() }),
     );
     const result = await readPosition(bridge as never, "sample", 45);
-    expect(result).toEqual({ kind: "recovered", page: 0, reason: "out-of-range" });
+    expect(result).toEqual({
+      kind: "recovered",
+      page: 0,
+      reason: "out-of-range",
+    });
   });
 
   it("returns resumed for a valid in-range page", async () => {
@@ -84,7 +100,10 @@ describe("writePosition", () => {
       page: 12,
       savedAt: 1730000000000,
     });
-    expect(bridge.setLocalStorage).toHaveBeenCalledWith(SAMPLE_KEY, expect.any(String));
+    expect(bridge.setLocalStorage).toHaveBeenCalledWith(
+      SAMPLE_KEY,
+      expect.any(String),
+    );
     expect(received).toHaveLength(0);
   });
 

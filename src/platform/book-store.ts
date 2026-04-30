@@ -11,7 +11,7 @@
  */
 
 import { SAMPLE_BOOK, type BookId } from "../content/sample-text";
-import { paginate } from "../reader/pagination";
+import { paginate, type PaginateOptions } from "../reader/pagination";
 
 const DB_NAME = "evenBooks";
 const DB_VERSION = 1;
@@ -66,9 +66,13 @@ function reqAsPromise<T>(req: IDBRequest<T>): Promise<T> {
  */
 export async function getBookContent(
   id: BookId,
+  paginateOpts?: PaginateOptions,
 ): Promise<StoredBookContent | null> {
   if (id === "sample") {
-    const pages = paginate(SAMPLE_BOOK.text);
+    // Sample is paginated on the fly (the bundled text never changes), so
+    // dev-only pagination overrides apply only to the sample. Imported
+    // books are paginated at import time and stored in IndexedDB.
+    const pages = paginate(SAMPLE_BOOK.text, paginateOpts);
     return {
       id: "sample",
       text: SAMPLE_BOOK.text,

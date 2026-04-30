@@ -20,7 +20,11 @@ export type ImportFailureReason =
   | "storage-full";
 
 export type ImportOutcome =
-  | { readonly kind: "success"; readonly book: Book; readonly entry: LibraryEntry }
+  | {
+      readonly kind: "success";
+      readonly book: Book;
+      readonly entry: LibraryEntry;
+    }
   | { readonly kind: "duplicate"; readonly existingEntry: LibraryEntry }
   | { readonly kind: "failure"; readonly reason: ImportFailureReason };
 
@@ -36,8 +40,7 @@ const FAILURE_MESSAGES: Record<ImportFailureReason, string> = {
   "unsupported-encoding":
     "Unsupported text encoding — please save the file as UTF-8.",
   empty: "This book has no readable content.",
-  "storage-full":
-    "Couldn't save this book — your phone may be out of space.",
+  "storage-full": "Couldn't save this book — your phone may be out of space.",
 };
 
 export function failureMessage(reason: ImportFailureReason): string {

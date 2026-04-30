@@ -33,7 +33,9 @@ function opfXml(opts: {
         `<item id="${s.id}" href="${s.href}" media-type="application/xhtml+xml"/>`,
     )
     .join("\n    ");
-  const spineRefs = spine.map((s) => `<itemref idref="${s.id}"/>`).join("\n    ");
+  const spineRefs = spine
+    .map((s) => `<itemref idref="${s.id}"/>`)
+    .join("\n    ");
 
   return `<?xml version="1.0"?>
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="bookid" version="3.0">
@@ -125,7 +127,7 @@ export async function buildMinimalEpub(
 
   const body = opts.emptyBody
     ? ""
-    : opts.body ?? "<p>Hello from a synthetic EPUB.</p>";
+    : (opts.body ?? "<p>Hello from a synthetic EPUB.</p>");
   zip.file("OEBPS/ch1.xhtml", chapterXhtml(body));
 
   if (opts.drm === "adept") {
@@ -135,10 +137,7 @@ export async function buildMinimalEpub(
   } else if (opts.drm === "rights") {
     zip.file("META-INF/rights.xml", "<rights/>");
   } else if (opts.drm === "fairplay") {
-    zip.file(
-      "META-INF/iTunesMetadata.plist",
-      "<?xml version=\"1.0\"?><plist/>",
-    );
+    zip.file("META-INF/iTunesMetadata.plist", '<?xml version="1.0"?><plist/>');
   }
 
   const buffer = await zip.generateAsync({ type: "arraybuffer" });

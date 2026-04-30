@@ -11,7 +11,7 @@ The phone is authoritative for all instances of these types (Constitution Princi
 A unit of reading material. v2 generalises v1's `Book` to cover both bundled and imported books.
 
 ```ts
-type BookId = "sample" | string;   // "sample" is reserved for the bundled book; all other ids are 16-hex-char SHA-256 truncations.
+type BookId = "sample" | string; // "sample" is reserved for the bundled book; all other ids are 16-hex-char SHA-256 truncations.
 
 type BookFormat = "bundled" | "epub" | "text";
 
@@ -20,7 +20,7 @@ interface Book {
   readonly title: string;
   readonly author: string;
   readonly format: BookFormat;
-  readonly text: string;             // Whitespace-normalised body; \n\n separates paragraphs.
+  readonly text: string; // Whitespace-normalised body; \n\n separates paragraphs.
 }
 ```
 
@@ -38,8 +38,8 @@ The bundled instance lives at compile time in `src/content/sample-text.ts` — i
 
 ```ts
 interface Page {
-  readonly index: number;        // 0-based.
-  readonly text: string;         // ≤ 600 chars (v1 hard cap).
+  readonly index: number; // 0-based.
+  readonly text: string; // ≤ 600 chars (v1 hard cap).
   readonly isFirst: boolean;
   readonly isLast: boolean;
 }
@@ -59,9 +59,9 @@ interface LibraryEntry {
   readonly title: string;
   readonly author: string;
   readonly format: BookFormat;
-  readonly addedAt: number;          // ms since epoch
-  readonly lastOpenedAt: number | null;   // ms since epoch; null until first open
-  readonly totalPages: number;       // computed at import time, persisted for sort/UI; never recomputed in v2
+  readonly addedAt: number; // ms since epoch
+  readonly lastOpenedAt: number | null; // ms since epoch; null until first open
+  readonly totalPages: number; // computed at import time, persisted for sort/UI; never recomputed in v2
 }
 ```
 
@@ -80,8 +80,8 @@ The in-memory + persisted ordered collection of library entries.
 
 ```ts
 interface Library {
-  readonly entries: readonly LibraryEntry[];   // ordered by sort comparator (see below)
-  readonly version: 2;                          // schema version; bumps on incompatible migrations
+  readonly entries: readonly LibraryEntry[]; // ordered by sort comparator (see below)
+  readonly version: 2; // schema version; bumps on incompatible migrations
 }
 ```
 
@@ -116,8 +116,8 @@ Per-book reading position. Same shape as v1 but scoped per book.
 ```ts
 interface ReadingPosition {
   readonly book: BookId;
-  readonly page: number;             // 0-based; integer in [0, totalPages)
-  readonly savedAt: number;          // ms since epoch; informational
+  readonly page: number; // 0-based; integer in [0, totalPages)
+  readonly savedAt: number; // ms since epoch; informational
 }
 ```
 
@@ -161,10 +161,10 @@ Tracks a single in-flight import for the UI's progress indicator. Lives only whi
 
 ```ts
 interface ImportJob {
-  readonly id: string;               // generated; lasts only for this job
-  readonly filename: string;         // for the "Importing 'filename'…" indicator
+  readonly id: string; // generated; lasts only for this job
+  readonly filename: string; // for the "Importing 'filename'…" indicator
   readonly status: "running" | "completed" | "failed";
-  readonly outcome?: ImportOutcome;  // populated when status !== 'running'
+  readonly outcome?: ImportOutcome; // populated when status !== 'running'
 }
 ```
 
@@ -198,7 +198,7 @@ interface ReaderState {
 }
 ```
 
-The only material change at the call-site is in `main.ts`: `state.book` and `state.pages` are now constructed from the *currently-active* `LibraryEntry` (looked up by `BookId` and joined with the IndexedDB-stored `text` + `pages`), rather than from the bundled `SAMPLE_BOOK` constant directly.
+The only material change at the call-site is in `main.ts`: `state.book` and `state.pages` are now constructed from the _currently-active_ `LibraryEntry` (looked up by `BookId` and joined with the IndexedDB-stored `text` + `pages`), rather than from the bundled `SAMPLE_BOOK` constant directly.
 
 The reducer itself remains a pure function and untouched — Constitution Principle III's idempotent rebuild on reconnect still works for any `Book`.
 
@@ -206,12 +206,12 @@ The reducer itself remains a pure function and untouched — Constitution Princi
 
 ## Storage layout (full picture)
 
-| Layer | Key / Object | Shape | Size (typical) |
-|---|---|---|---|
-| `bridge.setLocalStorage` | `evenBooks.library.v2` | `Library` JSON | ~hundreds of bytes per entry |
-| `bridge.setLocalStorage` | `evenBooks.position.<bookId>` (one per book) | `ReadingPosition` JSON | < 100 bytes each |
-| `bridge.setLocalStorage` | `evenBooks.position.v1` | (deprecated, deleted on first v2 launch by migration) | — |
-| WebView IndexedDB | DB `evenBooks`, store `books`, key = `BookId` | `{ text: string, pages: string[] }` | up to ~50 MB per book (per Spec Assumption 6) |
+| Layer                    | Key / Object                                  | Shape                                                 | Size (typical)                                |
+| ------------------------ | --------------------------------------------- | ----------------------------------------------------- | --------------------------------------------- |
+| `bridge.setLocalStorage` | `evenBooks.library.v2`                        | `Library` JSON                                        | ~hundreds of bytes per entry                  |
+| `bridge.setLocalStorage` | `evenBooks.position.<bookId>` (one per book)  | `ReadingPosition` JSON                                | < 100 bytes each                              |
+| `bridge.setLocalStorage` | `evenBooks.position.v1`                       | (deprecated, deleted on first v2 launch by migration) | —                                             |
+| WebView IndexedDB        | DB `evenBooks`, store `books`, key = `BookId` | `{ text: string, pages: string[] }`                   | up to ~50 MB per book (per Spec Assumption 6) |
 
 `bookId === "sample"` is special: there is no IndexedDB record for the sample (the content is bundled). Reads of `getBookContent("sample")` short-circuit to the compiled `SAMPLE_BOOK` constant.
 

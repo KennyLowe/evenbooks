@@ -89,7 +89,9 @@ describe("paginate — paragraph handling", () => {
   it("does not exceed the per-page char target by an unbounded amount", () => {
     // ~5 page-fulls of content: ensure pages stay close to target.
     const wordsPerPage = Math.floor(TARGET_CHARS_PER_PAGE / 6); // ~5-char words
-    const text = Array.from({ length: wordsPerPage * 5 }, () => "alpha").join(" ");
+    const text = Array.from({ length: wordsPerPage * 5 }, () => "alpha").join(
+      " ",
+    );
     const pages = paginate(text);
     for (const p of pages) {
       // Allow a generous over-count for the slack on word boundaries, but

@@ -22,7 +22,7 @@ The phone is authoritative for all state; the glasses are a derived viewport (pe
 - Q: What's on a normal reading frame on the glasses? → A: Body text only. No page chrome. Progress, if surfaced in v1, lives on the phone-side status UI.
 - Q: What does the phone-side minimal UI show? → A: Connection state + currently-reading status (book title and "Page X of Y").
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 — Read a sample book on the glasses (Priority: P1)
 
@@ -50,7 +50,7 @@ A reader puts on their G2 glasses, opens evenBooks (from the phone or from the g
 - **Touchpad event fires during page render**: input is queued; the in-flight render completes, then the queued input applies. No dropped or duplicated events.
 - **App crashes or is force-killed mid-page**: on next launch, the page the user was on at the time of crash restores. (Persistence is written immediately on every page change, so crash loss is zero pages.)
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 Functional requirements describe **what** the user can do. Numbers (latencies, percentages, durations) live in Success Criteria, not here.
 
@@ -73,7 +73,7 @@ Functional requirements describe **what** the user can do. Numbers (latencies, p
 - **Sample text**: a single hardcoded book bundled with the app — a public-domain short story of approximately 2,000–5,000 words, yielding roughly 30–50 paginated pages on the v1 layout. Long enough to exercise multi-page navigation and end-of-book handling; short enough that a tester can traverse it page-by-page in a single test session. Treated as immutable v1 content.
 - **Reading position**: the index of the current page within the sample text. Authoritative on the phone; persisted across exits.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 These are how we'll know the MVP works. Numbers in this section are **provisional v1 targets** that will be revised after the first hardware-validation pass (per the constitution's "What we don't yet know" section).
 

@@ -51,7 +51,8 @@ export async function detectsDrm(zip: ZipFileMap): Promise<boolean> {
 function hasNonFontMangleEncryption(xml: string): boolean {
   // Permissive parse — find every Algorithm attribute on EncryptionMethod.
   // If any algorithm is NOT the IDPF font-mangling URI, treat as DRM.
-  const matches = xml.match(/<EncryptionMethod[^>]*Algorithm=["']([^"']+)["']/g) ?? [];
+  const matches =
+    xml.match(/<EncryptionMethod[^>]*Algorithm=["']([^"']+)["']/g) ?? [];
   if (matches.length === 0) {
     // Edge case: encryption.xml present but no recognisable EncryptionMethod
     // → treat as DRM (we can't verify it's safe).

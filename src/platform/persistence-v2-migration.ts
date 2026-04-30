@@ -72,7 +72,10 @@ export async function migrateV1IfNeeded(
   try {
     parsed = JSON.parse(raw);
   } catch {
-    console.warn("[evenBooks] v1 position payload unparseable; preserving for forensics:", raw);
+    console.warn(
+      "[evenBooks] v1 position payload unparseable; preserving for forensics:",
+      raw,
+    );
     channel.emit({ kind: "recovery", reason: "unparseable" });
     return {
       library,
@@ -81,7 +84,9 @@ export async function migrateV1IfNeeded(
   }
 
   if (!isStoredPositionV1(parsed) || typeof parsed.page !== "number") {
-    console.warn("[evenBooks] v1 position payload shape invalid; preserving for forensics");
+    console.warn(
+      "[evenBooks] v1 position payload shape invalid; preserving for forensics",
+    );
     channel.emit({ kind: "recovery", reason: "unparseable" });
     return {
       library,
@@ -111,10 +116,13 @@ export async function migrateV1IfNeeded(
   }
 
   // Add or refresh the sample entry in the library.
-  const seeded = library.entries.length === 0
-    ? bootstrapWithSample(sampleTotalPages, now)
-    : library;
-  const sample = findEntry(seeded, "sample") ?? bootstrapWithSample(sampleTotalPages, now).entries[0];
+  const seeded =
+    library.entries.length === 0
+      ? bootstrapWithSample(sampleTotalPages, now)
+      : library;
+  const sample =
+    findEntry(seeded, "sample") ??
+    bootstrapWithSample(sampleTotalPages, now).entries[0];
   const updatedSample = { ...sample, lastOpenedAt: now };
   const nextLibrary = addEntry(seeded, updatedSample);
 

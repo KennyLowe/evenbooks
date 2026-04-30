@@ -33,7 +33,7 @@ The system file picker invocation works in the simulator the same way it would o
 
 For a quick happy-path test:
 
-1. Download a known-good DRM-free EPUB from [Standard Ebooks](https://standardebooks.org/) or [Project Gutenberg](https://gutenberg.org/) (any short title — Carroll's *Alice in Wonderland* is a good fixture).
+1. Download a known-good DRM-free EPUB from [Standard Ebooks](https://standardebooks.org/) or [Project Gutenberg](https://gutenberg.org/) (any short title — Carroll's _Alice in Wonderland_ is a good fixture).
 2. In the simulator, click "Add book" and pick that file.
 3. Watch the import indicator; the new book appears in the library; tap it; the v1 read loop takes over on the simulator's "Glasses Display" window.
 
@@ -79,7 +79,7 @@ These build valid (or deliberately invalid) ZIP/TXT byte sequences in-memory usi
 Replicate the validation procedure from v1, with these v2-specific additions:
 
 1. Repeat v1's User Story 1 procedure on the bundled sample — confirm no regression.
-2. Import a real EPUB from the user's phone storage (download Standard Ebooks' *Alice in Wonderland* to the phone's Documents folder beforehand). Time the import end-to-end; confirm under 30 s for a 1–5 MB book.
+2. Import a real EPUB from the user's phone storage (download Standard Ebooks' _Alice in Wonderland_ to the phone's Documents folder beforehand). Time the import end-to-end; confirm under 30 s for a 1–5 MB book.
 3. Import a 50 MB+ EPUB → confirm `oversize` refusal.
 4. Import a known DRM-protected EPUB (e.g. one purchased from Apple Books, copied to the phone) → confirm `drm-protected` refusal with the right message.
 5. Import a corrupt EPUB (truncate a real EPUB to half its size, save as `.epub`) → confirm `malformed` refusal.

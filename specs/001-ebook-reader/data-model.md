@@ -15,13 +15,14 @@ type BookId = "sample"; // v1: only one possible value; widened to string in spe
 
 interface Book {
   readonly id: BookId;
-  readonly title: string;        // shown on phone-side UI; never on glasses
-  readonly author: string;       // shown on phone-side UI; never on glasses
-  readonly text: string;         // full body; whitespace-normalised at build (see R7)
+  readonly title: string; // shown on phone-side UI; never on glasses
+  readonly author: string; // shown on phone-side UI; never on glasses
+  readonly text: string; // full body; whitespace-normalised at build (see R7)
 }
 ```
 
 Constraints:
+
 - `text` must be non-empty after whitespace normalisation. Build-time check; if empty, build fails.
 - `title.length ≤ 64` (phone-UI typography budget; not enforced at build but documented).
 
@@ -40,18 +41,19 @@ export const SAMPLE_BOOK: Book = {
 
 ## Page
 
-A paginated chunk of `Book.text` formatted to fit one glasses frame. Pages are *derived* — they are not user-edited, not stored, and not transmitted across persistence boundaries. They are computed once per session by the pagination engine.
+A paginated chunk of `Book.text` formatted to fit one glasses frame. Pages are _derived_ — they are not user-edited, not stored, and not transmitted across persistence boundaries. They are computed once per session by the pagination engine.
 
 ```ts
 interface Page {
-  readonly index: number;        // 0-based; 0 = first page
-  readonly text: string;         // ≤ 600 chars (hard cap from R1)
-  readonly isFirst: boolean;     // index === 0
-  readonly isLast: boolean;      // index === totalPages - 1
+  readonly index: number; // 0-based; 0 = first page
+  readonly text: string; // ≤ 600 chars (hard cap from R1)
+  readonly isFirst: boolean; // index === 0
+  readonly isLast: boolean; // index === totalPages - 1
 }
 ```
 
 Pagination rules (committed in `src/reader/pagination.ts`, per Phase 0 R1):
+
 1. Walk source text in order; greedy fill of lines (≤ `CHARS_PER_LINE = 48`).
 2. Greedy fill of pages (≤ `LINES_PER_PAGE = 6`).
 3. Words longer than `CHARS_PER_LINE` hard-break at exactly `CHARS_PER_LINE`.
@@ -70,8 +72,8 @@ The persisted state — the only thing that crosses the app-restart boundary.
 ```ts
 interface ReadingPosition {
   readonly book: BookId;
-  readonly page: number;         // 0-based index into the Page[] for that book
-  readonly savedAt: number;      // ms since epoch; used only for diagnostics, never read for logic
+  readonly page: number; // 0-based index into the Page[] for that book
+  readonly savedAt: number; // ms since epoch; used only for diagnostics, never read for logic
 }
 ```
 
@@ -79,6 +81,7 @@ Storage: `bridge.setLocalStorage("evenBooks.position.v1", JSON.stringify(positio
 Retrieval and recovery: see `contracts/persistence.md` for the full state machine.
 
 Validation on read:
+
 - JSON.parse must succeed.
 - `book` must equal the currently-loaded book's id (v1: always `"sample"`).
 - `page` must be an integer in `[0, totalPages)`.
@@ -93,7 +96,7 @@ The app's runtime state machine. Lives only while the WebView is alive; rebuilt 
 ```ts
 type ReaderMode =
   | { kind: "reading"; pageIndex: number }
-  | { kind: "clamp-flash"; pageIndex: number; flashUntil: number }   // flashUntil = timestamp ms
+  | { kind: "clamp-flash"; pageIndex: number; flashUntil: number } // flashUntil = timestamp ms
   | { kind: "end-of-book" }
   | { kind: "exiting" };
 
@@ -107,18 +110,18 @@ interface ReaderState {
 
 Reducer-style transitions (committed in `src/reader/reader.ts`):
 
-| Current mode | Event | Next mode | Side effects |
-|---|---|---|---|
-| `reading(N)`, N < lastIndex | `NEXT_PAGE` | `reading(N+1)` | Persist position; render page N+1 |
-| `reading(N)`, N === lastIndex | `NEXT_PAGE` | `end-of-book` | No persist (still on N); render end-of-book frame |
-| `reading(N)`, N > 0 | `PREV_PAGE` | `reading(N-1)` | Persist position; render page N-1 |
-| `reading(0)` | `PREV_PAGE` | `clamp-flash(0, now+1000)` | Render clamp-flash frame; schedule revert |
-| `clamp-flash(N, t)` | `TIMER_EXPIRED` (now ≥ t) | `reading(N)` | Render page N |
-| `clamp-flash(N, t)` | any other input | (queued; processed after revert) | (input queue) |
-| `end-of-book` | `NEXT_PAGE` | `exiting` | Call `bridge.shutDownPageContainer(0)` |
-| `end-of-book` | `PREV_PAGE` | `reading(lastIndex)` | Render last page |
-| any | `EXIT` (swipe down) | `exiting` | Persist position; teardown subs; `bridge.shutDownPageContainer(0)` |
-| any | `RECONNECT` (device status → connected) | (mode unchanged) | Re-issue current frame's `textContainerUpgrade` (idempotent rebuild) |
+| Current mode                  | Event                                   | Next mode                        | Side effects                                                         |
+| ----------------------------- | --------------------------------------- | -------------------------------- | -------------------------------------------------------------------- |
+| `reading(N)`, N < lastIndex   | `NEXT_PAGE`                             | `reading(N+1)`                   | Persist position; render page N+1                                    |
+| `reading(N)`, N === lastIndex | `NEXT_PAGE`                             | `end-of-book`                    | No persist (still on N); render end-of-book frame                    |
+| `reading(N)`, N > 0           | `PREV_PAGE`                             | `reading(N-1)`                   | Persist position; render page N-1                                    |
+| `reading(0)`                  | `PREV_PAGE`                             | `clamp-flash(0, now+1000)`       | Render clamp-flash frame; schedule revert                            |
+| `clamp-flash(N, t)`           | `TIMER_EXPIRED` (now ≥ t)               | `reading(N)`                     | Render page N                                                        |
+| `clamp-flash(N, t)`           | any other input                         | (queued; processed after revert) | (input queue)                                                        |
+| `end-of-book`                 | `NEXT_PAGE`                             | `exiting`                        | Call `bridge.shutDownPageContainer(0)`                               |
+| `end-of-book`                 | `PREV_PAGE`                             | `reading(lastIndex)`             | Render last page                                                     |
+| any                           | `EXIT` (swipe down)                     | `exiting`                        | Persist position; teardown subs; `bridge.shutDownPageContainer(0)`   |
+| any                           | `RECONNECT` (device status → connected) | (mode unchanged)                 | Re-issue current frame's `textContainerUpgrade` (idempotent rebuild) |
 
 Idempotency rule (Constitution Principle III): re-rendering the current frame must produce no observable user effect beyond reaffirming the display. Specifically: the same pageIndex → same payload → same rendered frame.
 
@@ -129,6 +132,7 @@ Input queue rule: when the reader is in `clamp-flash`, incoming `NEXT_PAGE` / `P
 ## Out-of-scope entities (deferred)
 
 These are intentionally absent from v1. They appear in follow-on specs:
+
 - `Library` — multi-book collection (spec 003).
 - `ImportJob` — async import progress entity (spec 002).
 - `UserProfile` — settings / preferences (no spec yet).

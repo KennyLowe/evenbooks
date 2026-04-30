@@ -17,7 +17,7 @@ The G2 display is a 576×288 rectangle of green-on-black pixels worn in the user
 
 ### II. Data Minimalism
 
-Capture, transmit, and store the minimum data the feature needs. The hardware enforces some of this for us (no camera, no speaker), but the channels we *can* abuse — microphone, IMU, network, persistent storage — are the developer's responsibility.
+Capture, transmit, and store the minimum data the feature needs. The hardware enforces some of this for us (no camera, no speaker), but the channels we _can_ abuse — microphone, IMU, network, persistent storage — are the developer's responsibility.
 
 - **Sensors are off by default.** Microphone (`audioControl`) and IMU (`imuControl`) start disabled and turn on only for the duration of a feature that needs them, with a clear user-visible signal when they're active.
 - **Lowest-acceptable rate.** When a sensor is on, request the minimum rate that does the job. IMU `P1000` (1 Hz) is the default; faster requires written justification.
@@ -46,7 +46,7 @@ G2 batteries are small and BLE bandwidth is finite. Updates must be parsimonious
 
 When something fails, the user finds out. Silent degradation is forbidden — better a visible "couldn't reach glasses" than a phantom UI that pretends everything is fine.
 
-- Every catch block either *recovers* (with a recovery the user can see) or *surfaces* (with a message the user can act on). Logging-and-swallowing is not a failure mode of this app.
+- Every catch block either _recovers_ (with a recovery the user can see) or _surfaces_ (with a message the user can act on). Logging-and-swallowing is not a failure mode of this app.
 - The phone-side UI always shows ground truth for the connection state (connected / connecting / disconnected) when reading or writing depends on it.
 - Errors with no user action ("internal: container ID mismatch") still appear, but as a discreet status the user can ignore — never hidden, never mistaken for success.
 
@@ -64,15 +64,15 @@ These are facts of the platform. Plans that violate them are not policy violatio
 
 ### Display & layout
 
-| Aspect | Limit |
-|---|---|
-| Display resolution | 576 × 288 px per eye |
-| Colour depth | 4-bit greyscale (16 shades; renders green-on-black). No colour rendering. |
-| Origin | (0, 0) top-left; X right, Y down |
-| Containers per page | ≤12 total; ≤8 text; ≤4 image |
-| Text content | ≤1000 chars per `TextContainerProperty.content`; ≤2000 chars per `textContainerUpgrade` payload |
-| Image container size | width 20–288, height 20–144 |
-| Padding | 0–32 px; border width 0–5; border radius 0–10 |
+| Aspect               | Limit                                                                                           |
+| -------------------- | ----------------------------------------------------------------------------------------------- |
+| Display resolution   | 576 × 288 px per eye                                                                            |
+| Colour depth         | 4-bit greyscale (16 shades; renders green-on-black). No colour rendering.                       |
+| Origin               | (0, 0) top-left; X right, Y down                                                                |
+| Containers per page  | ≤12 total; ≤8 text; ≤4 image                                                                    |
+| Text content         | ≤1000 chars per `TextContainerProperty.content`; ≤2000 chars per `textContainerUpgrade` payload |
+| Image container size | width 20–288, height 20–144                                                                     |
+| Padding              | 0–32 px; border width 0–5; border radius 0–10                                                   |
 
 ### Lifecycle (one-shot startup, page-container model)
 

@@ -6,10 +6,7 @@ import {
   findEntry,
 } from "../../src/library/library";
 import { positionKeyFor } from "../../src/platform/persistence";
-import {
-  createNoticeChannel,
-  type Notice,
-} from "../../src/platform/errors";
+import { createNoticeChannel, type Notice } from "../../src/platform/errors";
 
 const V1_KEY = "evenBooks.position.v1";
 

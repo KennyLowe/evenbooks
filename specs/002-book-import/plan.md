@@ -61,18 +61,18 @@ No EPUB-specific parsing library beyond JSZip. OPF (`content.opf`), container (`
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design._
 
 Constitution v3.0.0 has one **NON-NEGOTIABLE** principle (I) and five soft principles (II–VI). Each is evaluated against this plan:
 
-| Principle | Verdict | Evidence in plan |
-|---|---|---|
-| **I. Every Frame Is Glanceable (NN)** | ✅ Pass | The glasses-side read loop is unchanged (FR-017). The new phone-side library list and import flow live entirely on the phone WebView, not on the glasses. No new glasses frames, no chrome added to existing frames. |
-| **II. Data Minimalism** | ✅ Pass | No microphone, no IMU, no network. Imported book content lives only on the device (companion app KV + WebView IndexedDB). Content hashing is local; no telemetry. The 50 MB per-file cap (Assumption 6) and explicit `storage-full` refusal (FR-014, FR-015) keep storage usage bounded and visible. |
-| **III. Phone Is the Brain, Glasses Are the Lens** | ✅ Pass | Library, import pipeline, and persistence all phone-side. Glasses display continues to be a derived projection of the active reader state. The reducer (`src/reader/reader.ts`) is unchanged; it operates on whatever `Book + Page[]` it receives, regardless of source (bundled or imported). |
-| **IV. Battery and Bandwidth Are Sacred** | ✅ Pass | Import does not touch BLE — imports happen entirely on the phone before the user opens the book. Reading still uses `textContainerUpgrade` per v1. No new IMU or audio. The pre-paginate-once-cache-forever model (Assumption 8) avoids repeated rendering work per page-turn. |
-| **V. Crash Without Lying** | ✅ Pass | Six typed refusal categories (FR-014, FR-015) surface through the import error slot with non-technical messages. The v1 transient notice channel is preserved for ephemeral status (`save-failed`, recovery notices). The migration step (FR-021) is wrapped in error handling that surfaces a notice on failure rather than silently regressing. The `storage-full-during-import` path is explicit. |
-| **VI. Simulator-First, Hardware-Verified** | ✅ Pass | The full import pipeline is testable in the simulator: the WebView hosts the file picker, JSZip runs in the WebView, IndexedDB is available, and the bundled sample preserves v1's read-loop verification. Hardware verification of the import flow happens in the same hardware-validation pass as v1's R1/R2/R3/R5 (post-2026-05-21). |
+| Principle                                         | Verdict | Evidence in plan                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **I. Every Frame Is Glanceable (NN)**             | ✅ Pass | The glasses-side read loop is unchanged (FR-017). The new phone-side library list and import flow live entirely on the phone WebView, not on the glasses. No new glasses frames, no chrome added to existing frames.                                                                                                                                                                                 |
+| **II. Data Minimalism**                           | ✅ Pass | No microphone, no IMU, no network. Imported book content lives only on the device (companion app KV + WebView IndexedDB). Content hashing is local; no telemetry. The 50 MB per-file cap (Assumption 6) and explicit `storage-full` refusal (FR-014, FR-015) keep storage usage bounded and visible.                                                                                                 |
+| **III. Phone Is the Brain, Glasses Are the Lens** | ✅ Pass | Library, import pipeline, and persistence all phone-side. Glasses display continues to be a derived projection of the active reader state. The reducer (`src/reader/reader.ts`) is unchanged; it operates on whatever `Book + Page[]` it receives, regardless of source (bundled or imported).                                                                                                       |
+| **IV. Battery and Bandwidth Are Sacred**          | ✅ Pass | Import does not touch BLE — imports happen entirely on the phone before the user opens the book. Reading still uses `textContainerUpgrade` per v1. No new IMU or audio. The pre-paginate-once-cache-forever model (Assumption 8) avoids repeated rendering work per page-turn.                                                                                                                       |
+| **V. Crash Without Lying**                        | ✅ Pass | Six typed refusal categories (FR-014, FR-015) surface through the import error slot with non-technical messages. The v1 transient notice channel is preserved for ephemeral status (`save-failed`, recovery notices). The migration step (FR-021) is wrapped in error handling that surfaces a notice on failure rather than silently regressing. The `storage-full-during-import` path is explicit. |
+| **VI. Simulator-First, Hardware-Verified**        | ✅ Pass | The full import pipeline is testable in the simulator: the WebView hosts the file picker, JSZip runs in the WebView, IndexedDB is available, and the bundled sample preserves v1's read-loop verification. Hardware verification of the import flow happens in the same hardware-validation pass as v1's R1/R2/R3/R5 (post-2026-05-21).                                                              |
 
 **SDK invariants** (from constitution): all respected.
 
@@ -157,8 +157,8 @@ evenBooks/
 > Empty. The Constitution Check passes without violations.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| _(none)_ | — | — |
+| --------- | ---------- | ------------------------------------ |
+| _(none)_  | —          | —                                    |
 
 ## Phase 0 — Research
 

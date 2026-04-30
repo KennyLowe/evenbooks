@@ -66,13 +66,13 @@ When visible, mirrors v1's status block:
 
 ### Import section
 
-| State | DOM |
-|---|---|
-| Idle (no import running, no error to show) | `.add-book` enabled; `.import-progress` hidden; `.import-error` hidden. |
-| Import in progress | `.add-book` disabled; `.import-progress` visible with `.progress-text` set to `Importing '<filename>'…`; `.import-error` hidden. |
-| Import succeeded | Indicator clears (back to Idle); the new entry appears in `.entries` (by re-rendering); no error. |
-| Import failed | Indicator clears; `.import-error` visible with the canonical message for the failure `reason` (per `contracts/import-pipeline.md`); persists until next user interaction. |
-| Duplicate detected | Same as Import failed visually, but with the duplicate confirmation message ("Already in your library — opening the existing copy."). The existing library entry is bumped to the top of the list. |
+| State                                      | DOM                                                                                                                                                                                                |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Idle (no import running, no error to show) | `.add-book` enabled; `.import-progress` hidden; `.import-error` hidden.                                                                                                                            |
+| Import in progress                         | `.add-book` disabled; `.import-progress` visible with `.progress-text` set to `Importing '<filename>'…`; `.import-error` hidden.                                                                   |
+| Import succeeded                           | Indicator clears (back to Idle); the new entry appears in `.entries` (by re-rendering); no error.                                                                                                  |
+| Import failed                              | Indicator clears; `.import-error` visible with the canonical message for the failure `reason` (per `contracts/import-pipeline.md`); persists until next user interaction.                          |
+| Duplicate detected                         | Same as Import failed visually, but with the duplicate confirmation message ("Already in your library — opening the existing copy."). The existing library entry is bumped to the top of the list. |
 
 The `.import-error` slot is **persistent** — it is dismissed when the user takes their next interaction:
 

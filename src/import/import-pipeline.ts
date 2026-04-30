@@ -18,10 +18,7 @@ import type { Library } from "../library/library";
 import { findEntry } from "../library/library";
 import type { LibraryEntry } from "../library/library-entry";
 import type { Book } from "../content/sample-text";
-import {
-  hashFileBytes,
-  hashNormalisedText,
-} from "../library/duplicates";
+import { hashFileBytes, hashNormalisedText } from "../library/duplicates";
 import { putBookContent } from "../platform/book-store";
 import { paginate } from "../reader/pagination";
 import { epubParse } from "./epub";
@@ -54,7 +51,12 @@ export async function importFile(
   }
 
   // Stage 3: Parse.
-  let parsed: { format: "epub" | "text"; title: string; author: string; text: string };
+  let parsed: {
+    format: "epub" | "text";
+    title: string;
+    author: string;
+    text: string;
+  };
   let id: string;
 
   if (extension === "epub") {

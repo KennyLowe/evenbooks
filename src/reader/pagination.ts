@@ -102,7 +102,7 @@ export function paginate(text: string, opts: PaginateOptions = {}): Page[] {
 
     if (currentLine.length > 0) {
       lines.push(currentLine);
-      currentLine = "";
+      // No reset needed; outer loop redeclares `currentLine` each iteration.
     }
 
     // Paragraph separator: insert a blank line between paragraphs (but not

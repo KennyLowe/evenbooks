@@ -178,13 +178,13 @@ function parseOpf(opfXml: string): ParsedOpf | null {
   if (!dom) return null;
 
   const titleEl = dom.querySelector("metadata > title, metadata > *|title");
-  const title =
-    (titleEl?.textContent ?? findElementByLocalName(dom, "title")?.textContent ?? "")
-      .trim();
+  const title = (
+    titleEl?.textContent ??
+    findElementByLocalName(dom, "title")?.textContent ??
+    ""
+  ).trim();
 
-  const creators = Array.from(
-    queryByLocalName(dom, "creator"),
-  )
+  const creators = Array.from(queryByLocalName(dom, "creator"))
     .map((el) => el.textContent?.trim() ?? "")
     .filter((s) => s.length > 0);
 
