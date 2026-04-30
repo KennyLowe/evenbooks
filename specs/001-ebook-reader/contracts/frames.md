@@ -21,7 +21,7 @@ const CONTAINER: TextContainerProperty = new TextContainerProperty({
   borderColor: 0,
   borderRadius: 0,
   isEventCapture: 1,
-  content: "",                  // overwritten immediately by the first frame send
+  content: "", // overwritten immediately by the first frame send
 });
 ```
 
@@ -36,13 +36,14 @@ The default frame. Renders the body text of `Page` at index N.
 **Trigger**: every transition into `ReaderMode { kind: "reading", pageIndex: N }`. Also re-issued on `RECONNECT`.
 
 **Composition**:
+
 ```ts
 function pageFrame(page: Page): TextContainerUpgrade {
   return new TextContainerUpgrade({
     containerID: 1,
     containerName: "main",
     contentOffset: 0,
-    contentLength: 0,           // 0 means "replace from offset to end" — full content swap
+    contentLength: 0, // 0 means "replace from offset to end" — full content swap
     content: page.text,
   });
 }
@@ -59,6 +60,7 @@ A brief visual acknowledgement that a `PREV_PAGE` input was received at page 0. 
 **Trigger**: transition into `ReaderMode { kind: "clamp-flash", pageIndex: 0, flashUntil }`.
 
 **Composition**:
+
 ```ts
 function clampFlashFrame(page: Page): TextContainerUpgrade {
   // Prepend a transient indicator marker; the page text follows on a new line.
@@ -83,6 +85,7 @@ Replaces the page when the user presses NEXT past the final page.
 **Trigger**: transition into `ReaderMode { kind: "end-of-book" }`.
 
 **Composition**:
+
 ```ts
 function endOfBookFrame(book: Book): TextContainerUpgrade {
   return new TextContainerUpgrade({
@@ -101,18 +104,18 @@ function endOfBookFrame(book: Book): TextContainerUpgrade {
 
 ## Transition table
 
-| From frame | Input | To frame | SDK call |
-|---|---|---|---|
-| (none, app launch) | bootstrap complete | F-PAGE @ savedPage | `createStartUpPageContainer` then immediate `textContainerUpgrade` |
-| F-PAGE @ N (N < last) | `NEXT_PAGE` | F-PAGE @ N+1 | `textContainerUpgrade` |
-| F-PAGE @ N (N === last) | `NEXT_PAGE` | F-EOB | `textContainerUpgrade` |
-| F-PAGE @ N (N > 0) | `PREV_PAGE` | F-PAGE @ N-1 | `textContainerUpgrade` |
-| F-PAGE @ 0 | `PREV_PAGE` | F-CLAMP @ 0 | `textContainerUpgrade` |
-| F-CLAMP @ 0 | timer ~1 s | F-PAGE @ 0 | `textContainerUpgrade` |
-| F-EOB | `NEXT_PAGE` | (exit) | `shutDownPageContainer(0)` |
-| F-EOB | `PREV_PAGE` | F-PAGE @ last | `textContainerUpgrade` |
-| any | swipe down (`SCROLL_BOTTOM_EVENT`) | (exit) | `shutDownPageContainer(0)` |
-| any | reconnect (was disconnected) | (re-issue current frame) | `textContainerUpgrade` |
+| From frame              | Input                              | To frame                 | SDK call                                                           |
+| ----------------------- | ---------------------------------- | ------------------------ | ------------------------------------------------------------------ |
+| (none, app launch)      | bootstrap complete                 | F-PAGE @ savedPage       | `createStartUpPageContainer` then immediate `textContainerUpgrade` |
+| F-PAGE @ N (N < last)   | `NEXT_PAGE`                        | F-PAGE @ N+1             | `textContainerUpgrade`                                             |
+| F-PAGE @ N (N === last) | `NEXT_PAGE`                        | F-EOB                    | `textContainerUpgrade`                                             |
+| F-PAGE @ N (N > 0)      | `PREV_PAGE`                        | F-PAGE @ N-1             | `textContainerUpgrade`                                             |
+| F-PAGE @ 0              | `PREV_PAGE`                        | F-CLAMP @ 0              | `textContainerUpgrade`                                             |
+| F-CLAMP @ 0             | timer ~1 s                         | F-PAGE @ 0               | `textContainerUpgrade`                                             |
+| F-EOB                   | `NEXT_PAGE`                        | (exit)                   | `shutDownPageContainer(0)`                                         |
+| F-EOB                   | `PREV_PAGE`                        | F-PAGE @ last            | `textContainerUpgrade`                                             |
+| any                     | swipe down (`SCROLL_BOTTOM_EVENT`) | (exit)                   | `shutDownPageContainer(0)`                                         |
+| any                     | reconnect (was disconnected)       | (re-issue current frame) | `textContainerUpgrade`                                             |
 
 ## Idempotency
 
@@ -121,8 +124,9 @@ Every frame composer is a pure function of state. Calling it twice in a row with
 ## Forbidden frames
 
 To make the v1 contract explicit, the following frames are **not** present in v1 and adding them requires a constitution check (most would violate Principle I — chrome competing with body text):
+
 - A "loading" frame between launch and first content render.
-- A "disconnected" frame on the glasses (disconnect status surfaces on the *phone* per FR-008, never on the glasses).
+- A "disconnected" frame on the glasses (disconnect status surfaces on the _phone_ per FR-008, never on the glasses).
 - A "save failed" frame on the glasses.
 - A page-number frame, progress-bar frame, or any frame with chrome.
 - An animated transition between pages.
@@ -130,6 +134,7 @@ To make the v1 contract explicit, the following frames are **not** present in v1
 ## Test coverage (Vitest)
 
 `tests/unit/frames.test.ts`:
+
 - `pageFrame` produces an upgrade payload with `containerID: 1`, `containerName: "main"`, full-content replace, content === page text.
 - `clampFlashFrame` prepends "↑ start of book\n\n" and includes the page text.
 - `endOfBookFrame` includes the book title and "Press to exit".

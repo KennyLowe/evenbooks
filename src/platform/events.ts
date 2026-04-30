@@ -35,16 +35,12 @@ export function wireEvents(
     if (DEBUG_GESTURES) {
       // Log the entire event envelope so we can see whether the simulator
       // delivers gestures via textEvent, sysEvent, or both.
-      console.debug(
-        "[evenBooks] raw event @",
-        performance.now().toFixed(1),
-        {
-          textEvent: event.textEvent,
-          sysEvent: event.sysEvent,
-          listEvent: event.listEvent,
-          audioEvent: event.audioEvent ? "<audio>" : undefined,
-        },
-      );
+      console.debug("[evenBooks] raw event @", performance.now().toFixed(1), {
+        textEvent: event.textEvent,
+        sysEvent: event.sysEvent,
+        listEvent: event.listEvent,
+        audioEvent: event.audioEvent ? "<audio>" : undefined,
+      });
     }
 
     // Inputs may arrive via either envelope depending on SDK / simulator
@@ -54,7 +50,8 @@ export function wireEvents(
     // input.
     const textType = event.textEvent?.eventType;
     const sysType = event.sysEvent?.eventType;
-    const textEnvelope = event.textEvent !== undefined && event.textEvent !== null;
+    const textEnvelope =
+      event.textEvent !== undefined && event.textEvent !== null;
     const sysEnvelope = event.sysEvent !== undefined && event.sysEvent !== null;
 
     // Per the SDK quirk: protobuf omits the zero-value, so CLICK_EVENT (0)

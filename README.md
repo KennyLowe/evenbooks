@@ -1,8 +1,10 @@
 # evenBooks
 
+[![CI](https://github.com/KennyLowe/evenbooks/actions/workflows/ci.yml/badge.svg)](https://github.com/KennyLowe/evenbooks/actions/workflows/ci.yml)
+
 An ebook reader for the Even Realities G2 smart glasses. Built spec-first.
 
-**v2** lets you import your own EPUB and plain-text books from phone storage and read them on the glasses. v1's bundled sample ("The Tell-Tale Heart" by Edgar Allan Poe, public domain) remains as a permanent library entry. The reading experience on the glasses is unchanged from v1: single press advances, double press retreats, swipe down exits.
+**v3** adds library management on top of v2's import: per-entry delete (with confirmation), five sort orders (most recent / title / author / progress / date added — persisted across sessions), and a per-session text filter. The bundled sample ("The Tell-Tale Heart" by Edgar Allan Poe, public domain) remains permanently. The reading experience on the glasses is unchanged from v1: single press advances, double press retreats, swipe down exits.
 
 DRM-protected EPUBs are detected and refused with a clear message. Embedded images are skipped silently. The reader is text-only by design.
 
@@ -21,11 +23,17 @@ npm run dev -- --host 0.0.0.0
 npx evenhub qr --url http://<your-lan-ip>:5173
 ```
 
-## Test
+## Test, lint, format
 
 ```bash
 npm test             # one-shot (~120 unit tests, ~3 s)
 npm run test:watch   # watch mode
+npm run typecheck    # tsc --noEmit
+npm run lint         # ESLint
+npm run lint:fix     # ESLint with auto-fix
+npm run format       # Prettier write-in-place
+npm run format:check # Prettier verify only
+npm run ci           # what GitHub Actions runs (typecheck + lint + test)
 ```
 
 Tests cover pagination, the reader state machine, frame composers, persistence + migration, IndexedDB content store, content hashing, library state, EPUB parsing, DRM detection, plain-text import, and the full import pipeline (happy path + every typed refusal). Constitution Principle V — failures surface; nothing silent — is enforced by the typed-outcome and notice-channel tests.
@@ -34,16 +42,25 @@ Tests cover pagination, the reader state machine, frame composers, persistence +
 
 ```bash
 npm run build
-node node_modules/@evenrealities/evenhub-cli/main.js pack app.json dist -o evenBooks-0.2.0.ehpk
+node node_modules/@evenrealities/evenhub-cli/main.js pack app.json dist -o evenBooks-0.3.0.ehpk
 ```
 
 ## Where to read more
 
-### v2 (current — book import)
+### v3 (current — library management)
+
+- **Spec** — `specs/003-library-mgmt/spec.md`
+- **Plan** — `specs/003-library-mgmt/plan.md`
+- **Research** — `specs/003-library-mgmt/research.md` (R1–R7: comparator factory, delete coordination, filter strategy, settings, confirmation overlay, race handling, delete-while-reading)
+- **Data model** — `specs/003-library-mgmt/data-model.md`
+- **Contracts** — `specs/003-library-mgmt/contracts/{delete,sort,filter}.md`
+- **Quickstart** — `specs/003-library-mgmt/quickstart.md`
+
+### v2 (book import)
 
 - **Spec** — `specs/002-book-import/spec.md`
-- **Plan** — `specs/002-book-import/plan.md` (technical context, constitution check)
-- **Research** — `specs/002-book-import/research.md` (R1–R7 decisions: EPUB strategy, DRM detection, hybrid storage, identity scheme, migration, encoding, file picker)
+- **Plan** — `specs/002-book-import/plan.md`
+- **Research** — `specs/002-book-import/research.md` (R1–R7: EPUB strategy, DRM detection, hybrid storage, identity scheme, migration, encoding, file picker)
 - **Data model** — `specs/002-book-import/data-model.md`
 - **Contracts** — `specs/002-book-import/contracts/{persistence-v2,import-pipeline,library-ui}.md`
 - **Quickstart** — `specs/002-book-import/quickstart.md`
@@ -62,4 +79,4 @@ For SDK reference deeper than this app needs, the parent workspace at `C:\git\ev
 
 ## Status
 
-**v2 dev-complete** as of 2026-04-30. Awaiting hardware (~2026-05-21) for the combined v1/v2 hardware-validation pass. Provisional simulator-tested numbers in the spec Success Criteria and the research timing budgets will be tightened based on real hardware measurements.
+**v3 dev-complete** as of 2026-04-30. v1 + v2 + v3 all type-check, lint, and pass 143 unit tests; production build is clean; CI runs the same gates on every push. Awaiting hardware (~2026-05-21) for the combined v1/v2/v3 hardware-validation pass. Provisional simulator-tested numbers in the spec Success Criteria and the research timing budgets will be tightened based on real hardware measurements.

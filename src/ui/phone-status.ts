@@ -122,8 +122,7 @@ export function mountPhoneStatus(
       }, NOTICE_MS);
     },
     showClosed(lastPageIndex, totalPages) {
-      progressEl.textContent =
-        `Reader closed (was on Page ${lastPageIndex + 1} of ${totalPages})`;
+      progressEl.textContent = `Reader closed (was on Page ${lastPageIndex + 1} of ${totalPages})`;
     },
     hideReading() {
       readingEl.hidden = true;

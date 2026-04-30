@@ -23,16 +23,16 @@ The `.v2` suffix on the library key is intentional. Schema migrations in future 
 ```ts
 type StoredLibrary = {
   version: 2;
-  entries: StoredLibraryEntry[];   // unordered on disk; sorted in-memory at read time
+  entries: StoredLibraryEntry[]; // unordered on disk; sorted in-memory at read time
 };
 
 type StoredLibraryEntry = {
-  id: BookId;                      // "sample" or 16-hex-char SHA-256 truncation
+  id: BookId; // "sample" or 16-hex-char SHA-256 truncation
   title: string;
   author: string;
-  format: BookFormat;              // "bundled" | "epub" | "text"
-  addedAt: number;                 // ms since epoch
-  lastOpenedAt: number | null;     // ms since epoch; null until first open
+  format: BookFormat; // "bundled" | "epub" | "text"
+  addedAt: number; // ms since epoch
+  lastOpenedAt: number | null; // ms since epoch; null until first open
   totalPages: number;
 };
 ```
@@ -53,8 +53,8 @@ Same shape as v1's `evenBooks.position.v1`, scoped per book:
 ```ts
 type StoredPosition = {
   book: BookId;
-  page: number;                    // 0-based; integer in [0, totalPages)
-  savedAt: number;                 // ms since epoch
+  page: number; // 0-based; integer in [0, totalPages)
+  savedAt: number; // ms since epoch
 };
 ```
 
@@ -78,9 +78,9 @@ Save behaviour: same fire-and-forget pattern as v1 (immediate write on every pag
 ```ts
 type StoredBookContent = {
   id: BookId;
-  text: string;                    // post-extraction, whitespace-normalised body
-  pages: string[];                 // pre-paginated; index = page number; same as Page.text values
-  storedAt: number;                // ms since epoch
+  text: string; // post-extraction, whitespace-normalised body
+  pages: string[]; // pre-paginated; index = page number; same as Page.text values
+  storedAt: number; // ms since epoch
 };
 ```
 
@@ -178,12 +178,12 @@ Properties:
 
 ## On-disk schema versioning
 
-| Key / Store | Version | Migration policy |
-|---|---|---|
-| `evenBooks.library.v2` | 2 | A future v3 reader will read v2 entries and write v3; v2 reader treats unknown versions as "no library" and re-bootstraps. |
-| `evenBooks.position.<bookId>` | (no version field; v1-style) | Stable across v2 lifetime. Any future schema change bumps the suffix to `v2/`. |
-| IndexedDB `evenBooks` v1 | 1 | A future schema change uses IndexedDB's native `onupgradeneeded` to migrate. |
-| `evenBooks.position.v1` | (legacy) | Deleted by v2 migration on first launch. |
+| Key / Store                   | Version                      | Migration policy                                                                                                           |
+| ----------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `evenBooks.library.v2`        | 2                            | A future v3 reader will read v2 entries and write v3; v2 reader treats unknown versions as "no library" and re-bootstraps. |
+| `evenBooks.position.<bookId>` | (no version field; v1-style) | Stable across v2 lifetime. Any future schema change bumps the suffix to `v2/`.                                             |
+| IndexedDB `evenBooks` v1      | 1                            | A future schema change uses IndexedDB's native `onupgradeneeded` to migrate.                                               |
+| `evenBooks.position.v1`       | (legacy)                     | Deleted by v2 migration on first launch.                                                                                   |
 
 ---
 

@@ -55,11 +55,15 @@ describe("importFile — EPUB happy path", () => {
     });
     const channel = createNoticeChannel();
 
-    const first = await importFile(makeFile(epub, "x.epub"), emptyLibrary(), channel);
+    const first = await importFile(
+      makeFile(epub, "x.epub"),
+      emptyLibrary(),
+      channel,
+    );
     expect(first.kind).toBe("success");
     if (first.kind !== "success") return;
 
-    let lib: Library = addEntry(emptyLibrary(), first.entry);
+    const lib: Library = addEntry(emptyLibrary(), first.entry);
     const second = await importFile(makeFile(epub, "x.epub"), lib, channel);
 
     expect(second.kind).toBe("duplicate");

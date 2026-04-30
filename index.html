@@ -17,7 +17,11 @@
         min-height: 100%;
         background: #232323;
         color: #e5e5e5;
-        font: 15px/1.5 -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        font:
+          15px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          system-ui,
+          sans-serif;
         touch-action: manipulation;
         -webkit-text-size-adjust: 100%;
         overscroll-behavior: none;
@@ -104,7 +108,9 @@
         vertical-align: -1px;
       }
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
       }
       .import-error {
         margin: 0.75rem 0 0 0;
@@ -123,12 +129,51 @@
         font-weight: 600;
         color: #ccc;
       }
+      .library .controls {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0 0 0.75rem 0;
+      }
+      .library .filter-input {
+        flex: 1;
+        appearance: none;
+        background: #2a2a2a;
+        color: #e5e5e5;
+        border: 1px solid #555;
+        border-radius: 0.3rem;
+        padding: 0.4rem 0.6rem;
+        font: inherit;
+      }
+      .library .filter-input::placeholder {
+        color: #777;
+      }
+      .library .sort-select {
+        appearance: none;
+        background: #2a2a2a;
+        color: #e5e5e5;
+        border: 1px solid #555;
+        border-radius: 0.3rem;
+        padding: 0.4rem 1.6rem 0.4rem 0.6rem;
+        font: inherit;
+        background-image: linear-gradient(45deg, transparent 50%, #aaa 50%),
+          linear-gradient(135deg, #aaa 50%, transparent 50%);
+        background-position:
+          calc(100% - 12px) 50%,
+          calc(100% - 7px) 50%;
+        background-size:
+          5px 5px,
+          5px 5px;
+        background-repeat: no-repeat;
+      }
       .library .entries {
         list-style: none;
         margin: 0;
         padding: 0;
       }
       .library .entry {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         padding: 0.7rem 0.8rem;
         margin: 0 -0.8rem;
         border-radius: 0.3rem;
@@ -140,14 +185,106 @@
       .library .entry[data-content="evicted"] {
         opacity: 0.5;
       }
+      .library .entry-meta {
+        flex: 1;
+        min-width: 0;
+      }
       .library .entry-title {
         margin: 0;
         font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .library .entry-author {
         margin: 0.05rem 0 0 0;
         color: #aaa;
         font-size: 0.92rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .library .entry-delete {
+        appearance: none;
+        background: transparent;
+        color: #888;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+        padding: 0.2rem 0.5rem;
+        font: inherit;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .library .entry-delete:hover {
+        color: #e07a7a;
+        border-color: #555;
+        background: rgba(224, 122, 122, 0.08);
+      }
+      .library .empty-state {
+        margin: 0.75rem 0 0 0;
+        color: #888;
+        font-size: 0.95rem;
+        font-style: italic;
+      }
+      .library .empty-state[hidden] {
+        display: none;
+      }
+      .delete-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 1rem;
+      }
+      .delete-overlay-card {
+        background: #2a2a2a;
+        border: 1px solid #555;
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+        max-width: 22rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      }
+      .delete-overlay-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+      .delete-overlay-body {
+        margin: 0 0 1rem 0;
+        font-size: 0.95rem;
+        color: #ccc;
+      }
+      .delete-overlay-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+      }
+      .delete-overlay-cancel,
+      .delete-overlay-confirm {
+        appearance: none;
+        border: 1px solid #555;
+        border-radius: 0.3rem;
+        padding: 0.5rem 0.9rem;
+        font: inherit;
+        cursor: pointer;
+      }
+      .delete-overlay-cancel {
+        background: #3a3a3a;
+        color: #e5e5e5;
+      }
+      .delete-overlay-cancel:hover {
+        background: #444;
+      }
+      .delete-overlay-confirm {
+        background: rgba(224, 122, 122, 0.16);
+        color: #e07a7a;
+        border-color: #c66;
+      }
+      .delete-overlay-confirm:hover {
+        background: rgba(224, 122, 122, 0.25);
       }
       .notice {
         margin-top: 1rem;
@@ -186,7 +323,23 @@
 
       <section class="library">
         <h2>Your library</h2>
+        <div class="controls">
+          <input
+            class="filter-input"
+            type="search"
+            placeholder="Filter by title or author"
+            aria-label="Filter library"
+          />
+          <select class="sort-select" aria-label="Sort library">
+            <option value="most-recent">Most recent</option>
+            <option value="title-asc">Title (A→Z)</option>
+            <option value="author-asc">Author (A→Z)</option>
+            <option value="most-completed">Most completed</option>
+            <option value="date-added-desc">Date added (newest)</option>
+          </select>
+        </div>
         <ul class="entries"></ul>
+        <p class="empty-state" hidden></p>
       </section>
 
       <aside class="notice" hidden></aside>

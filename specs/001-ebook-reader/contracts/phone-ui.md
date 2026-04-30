@@ -29,24 +29,24 @@ The HTML is rendered server-side at build (it's static). Runtime updates only mu
 
 ## State-to-DOM mapping
 
-| Source state | DOM target | Update rule |
-|---|---|---|
-| Connection state | `.connection` text + `data-state` attribute | "Connecting…" / "Glasses connected" / "Glasses not connected" |
-| Current `ReaderState.book.title` | `.title` text | Set once at bootstrap |
-| Current `ReaderState.book.author` | `.author` text | Set once at bootstrap |
-| Current `pageIndex` + `totalPages` | `.progress` text | "Page {pageIndex+1} of {totalPages}" — updated on every reducer transition that changes pageIndex |
-| Active notice | `.notice` text + `hidden` | Visible for 5 s when a notice is emitted; hidden otherwise |
+| Source state                       | DOM target                                  | Update rule                                                                                       |
+| ---------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Connection state                   | `.connection` text + `data-state` attribute | "Connecting…" / "Glasses connected" / "Glasses not connected"                                     |
+| Current `ReaderState.book.title`   | `.title` text                               | Set once at bootstrap                                                                             |
+| Current `ReaderState.book.author`  | `.author` text                              | Set once at bootstrap                                                                             |
+| Current `pageIndex` + `totalPages` | `.progress` text                            | "Page {pageIndex+1} of {totalPages}" — updated on every reducer transition that changes pageIndex |
+| Active notice                      | `.notice` text + `hidden`                   | Visible for 5 s when a notice is emitted; hidden otherwise                                        |
 
 ## Notice channel
 
 A single transient slot for surfacing failures that the user should know about but that don't interrupt reading. Consumes events from the persistence layer (R6 / `contracts/persistence.md`) and from the save-failure path.
 
-| Event | Notice text | Duration |
-|---|---|---|
-| Read recovery: `unparseable` | "Could not restore previous position." | 5 s |
-| Read recovery: `wrong-book` | "No saved position for this book." | 5 s |
-| Read recovery: `out-of-range` | "Saved position is out of range; resumed at the start." | 5 s |
-| Save failure | "Could not save position; reading session continues." | 5 s |
+| Event                         | Notice text                                             | Duration |
+| ----------------------------- | ------------------------------------------------------- | -------- |
+| Read recovery: `unparseable`  | "Could not restore previous position."                  | 5 s      |
+| Read recovery: `wrong-book`   | "No saved position for this book."                      | 5 s      |
+| Read recovery: `out-of-range` | "Saved position is out of range; resumed at the start." | 5 s      |
+| Save failure                  | "Could not save position; reading session continues."   | 5 s      |
 
 If multiple notices arrive in rapid succession, the most recent replaces the prior. The 5 s timer resets on replacement.
 
@@ -54,10 +54,10 @@ If multiple notices arrive in rapid succession, the most recent replaces the pri
 
 Three states, derived from `bridge.onDeviceStatusChanged` per `src/platform/connection.ts`:
 
-| `DeviceConnectType` | UI state | Rendered text |
-|---|---|---|
-| `Connecting` | `connecting` | "Connecting…" |
-| `Connected` | `connected` | "Glasses connected" |
+| `DeviceConnectType`                        | UI state        | Rendered text           |
+| ------------------------------------------ | --------------- | ----------------------- |
+| `Connecting`                               | `connecting`    | "Connecting…"           |
+| `Connected`                                | `connected`     | "Glasses connected"     |
 | `Disconnected`, `ConnectionFailed`, `None` | `not-connected` | "Glasses not connected" |
 
 The phone UI is the **only** place this state surfaces (Constitution Principle V — surfacing — and FR-008's "MUST NOT pretend the glasses are showing content"). The glasses themselves never render a connection-status frame (Principle I).
@@ -65,6 +65,7 @@ The phone UI is the **only** place this state surfaces (Constitution Principle V
 ## Forbidden surfaces in v1
 
 Out of scope per spec; calling them out so they can't slip in:
+
 - A library list / book picker.
 - Settings (font size, brightness).
 - Glasses battery indicator.
@@ -75,6 +76,7 @@ Out of scope per spec; calling them out so they can't slip in:
 ## Test coverage
 
 The phone UI is small and DOM-mutating; in v1 we cover it via:
+
 - A pure-logic unit test on the state-to-text mapping (the function that takes a `ReaderState` and returns the strings to render). Asserts e.g. `page=12, totalPages=45` → `"Page 13 of 45"`.
 - Manual verification in the simulator (the WebView host renders this surface and we eyeball it).
 

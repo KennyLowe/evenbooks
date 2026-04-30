@@ -69,6 +69,7 @@ npx vitest
 ```
 
 Coverage scope (v1):
+
 - `src/reader/pagination.ts` — pagination correctness, edge cases.
 - `src/reader/reader.ts` — state machine transitions.
 - `src/reader/frames.ts` — frame composer purity and payload shape.
@@ -90,6 +91,7 @@ npx evenhub qr --url http://<your-lan-ip>:5173
 Scan the QR with the Even Realities phone app. The dev build runs on real glasses with HMR. Run through the User Story 1 Independent Test from `spec.md`.
 
 Capture:
+
 - A screenshot or photo of every frame type (F-PAGE on a few pages, F-CLAMP, F-EOB).
 - The R1 pagination measurements (do 48 chars actually fit one line? do 6 lines actually fit? is reading comfortable in peripheral vision?).
 - The R3 flicker observation (10-minute uninterrupted reading session — any flicker, after-image, fatigue?).
@@ -116,15 +118,15 @@ The `.ehpk` is the unit submitted to Even Hub.
 
 ## Troubleshooting
 
-| Symptom | First place to look |
-|---|---|
-| Simulator opens blank | Check `npm run dev` is running on :5173 and no firewall is blocking localhost |
-| `createStartUpPageContainer` returns `1` (invalid) | Check `containerTotalNum` matches the actual array lengths and `isEventCapture: 1` is set on exactly one container |
-| `createStartUpPageContainer` returns `2` (oversize) | A container exceeds the canvas; check x/y/width/height math |
-| Page text wraps oddly | R1 — `CHARS_PER_LINE` may be too high for actual rendered glyph width on the simulator. Adjust the constant in `src/reader/pagination.ts` |
-| Single press registers as double press (or vice versa) | R2 — turn on `DEBUG_GESTURES` and inspect the timing log |
-| Position doesn't resume on reopen | R6 — check the phone-side notice channel for a recovery message; check `bridge.getLocalStorage` returns the expected JSON |
-| `npm run simulate` errors with "no such command" | The simulator is in `devDependencies` but the `simulate` script is from the template — re-check `package.json` `scripts` block |
+| Symptom                                                | First place to look                                                                                                                       |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Simulator opens blank                                  | Check `npm run dev` is running on :5173 and no firewall is blocking localhost                                                             |
+| `createStartUpPageContainer` returns `1` (invalid)     | Check `containerTotalNum` matches the actual array lengths and `isEventCapture: 1` is set on exactly one container                        |
+| `createStartUpPageContainer` returns `2` (oversize)    | A container exceeds the canvas; check x/y/width/height math                                                                               |
+| Page text wraps oddly                                  | R1 — `CHARS_PER_LINE` may be too high for actual rendered glyph width on the simulator. Adjust the constant in `src/reader/pagination.ts` |
+| Single press registers as double press (or vice versa) | R2 — turn on `DEBUG_GESTURES` and inspect the timing log                                                                                  |
+| Position doesn't resume on reopen                      | R6 — check the phone-side notice channel for a recovery message; check `bridge.getLocalStorage` returns the expected JSON                 |
+| `npm run simulate` errors with "no such command"       | The simulator is in `devDependencies` but the `simulate` script is from the template — re-check `package.json` `scripts` block            |
 
 ## Where to learn more (in this workspace)
 

@@ -11,11 +11,7 @@
 
 import { TextContainerUpgrade } from "@evenrealities/even_hub_sdk";
 import type { Book } from "../content/sample-text";
-import {
-  clampFlashFrame,
-  endOfBookFrame,
-  pageFrame,
-} from "./frames";
+import { clampFlashFrame, endOfBookFrame, pageFrame } from "./frames";
 import type { Page } from "./pagination";
 import type { ConnectionState } from "../platform/connection";
 import type { StoredPosition } from "../platform/persistence";
@@ -34,9 +30,7 @@ export interface ReaderState {
   readonly connection: ConnectionState;
 }
 
-export type InternalEvent =
-  | { kind: "TIMER_EXPIRED" }
-  | { kind: "RECONNECT" };
+export type InternalEvent = { kind: "TIMER_EXPIRED" } | { kind: "RECONNECT" };
 
 export type Event = SemanticEvent | InternalEvent;
 
@@ -72,7 +66,11 @@ export function reduce(state: ReaderState, event: Event): ReduceResult {
         return {
           next: { ...state, mode: { kind: "reading", pageIndex: nextIndex } },
           render: pageFrame(state.pages[nextIndex]),
-          persist: { book: state.book.id, page: nextIndex, savedAt: Date.now() },
+          persist: {
+            book: state.book.id,
+            page: nextIndex,
+            savedAt: Date.now(),
+          },
           exit: false,
         };
       }
@@ -97,7 +95,11 @@ export function reduce(state: ReaderState, event: Event): ReduceResult {
         return {
           next: { ...state, mode: { kind: "reading", pageIndex: prevIndex } },
           render: pageFrame(state.pages[prevIndex]),
-          persist: { book: state.book.id, page: prevIndex, savedAt: Date.now() },
+          persist: {
+            book: state.book.id,
+            page: prevIndex,
+            savedAt: Date.now(),
+          },
           exit: false,
         };
       }

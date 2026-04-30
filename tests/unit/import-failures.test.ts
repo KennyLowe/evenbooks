@@ -2,22 +2,10 @@
 import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { importFile } from "../../src/import/import-pipeline";
-import {
-  emptyLibrary,
-  type Library,
-} from "../../src/library/library";
-import {
-  _resetForTests,
-  getBookContent,
-} from "../../src/platform/book-store";
-import {
-  createNoticeChannel,
-  type Notice,
-} from "../../src/platform/errors";
-import {
-  buildMinimalEpub,
-  buildTxtFile,
-} from "./_fixtures";
+import { emptyLibrary, type Library } from "../../src/library/library";
+import { _resetForTests, getBookContent } from "../../src/platform/book-store";
+import { createNoticeChannel, type Notice } from "../../src/platform/errors";
+import { buildMinimalEpub, buildTxtFile } from "./_fixtures";
 
 function makeFile(buffer: ArrayBuffer, name: string): File {
   return new File([buffer], name, { type: "application/octet-stream" });
@@ -148,10 +136,13 @@ describe("importFile — library unchanged on every failure", () => {
       "oversize",
       () => makeFile(new Uint8Array(51 * 1024 * 1024).buffer, "x.epub"),
     ],
-  ] as const)("%s leaves the library reference unchanged", async (_label, mkFile) => {
-    const initialLib: Library = emptyLibrary();
-    const out = await importFile(mkFile(), initialLib, createNoticeChannel());
-    expect(out.kind).toBe("failure");
-    expect(initialLib).toEqual(emptyLibrary());
-  });
+  ] as const)(
+    "%s leaves the library reference unchanged",
+    async (_label, mkFile) => {
+      const initialLib: Library = emptyLibrary();
+      const out = await importFile(mkFile(), initialLib, createNoticeChannel());
+      expect(out.kind).toBe("failure");
+      expect(initialLib).toEqual(emptyLibrary());
+    },
+  );
 });

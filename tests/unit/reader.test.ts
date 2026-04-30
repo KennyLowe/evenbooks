@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Page } from "../../src/reader/pagination";
-import {
-  reduce,
-  type ReaderState,
-} from "../../src/reader/reader";
+import { reduce, type ReaderState } from "../../src/reader/reader";
 import { SAMPLE_BOOK } from "../../src/content/sample-text";
 
 function fakePages(n: number): Page[] {
@@ -30,7 +27,11 @@ describe("reduce — reading transitions", () => {
     const result = reduce(state, "NEXT_PAGE");
     expect(result.next.mode).toEqual({ kind: "reading", pageIndex: 3 });
     expect(result.render).not.toBeNull();
-    expect(result.persist).toEqual({ book: "sample", page: 3, savedAt: expect.any(Number) });
+    expect(result.persist).toEqual({
+      book: "sample",
+      page: 3,
+      savedAt: expect.any(Number),
+    });
     expect(result.exit).toBe(false);
   });
 
@@ -47,7 +48,11 @@ describe("reduce — reading transitions", () => {
     const state = freshState(3, 5);
     const result = reduce(state, "PREV_PAGE");
     expect(result.next.mode).toEqual({ kind: "reading", pageIndex: 2 });
-    expect(result.persist).toEqual({ book: "sample", page: 2, savedAt: expect.any(Number) });
+    expect(result.persist).toEqual({
+      book: "sample",
+      page: 2,
+      savedAt: expect.any(Number),
+    });
   });
 
   it("reading(0) + PREV_PAGE → clamp-flash(0)", () => {
@@ -103,7 +108,11 @@ describe("reduce — exit", () => {
     const result = reduce(state, "EXIT");
     expect(result.next.mode).toEqual({ kind: "exiting" });
     expect(result.exit).toBe(true);
-    expect(result.persist).toEqual({ book: "sample", page: 2, savedAt: expect.any(Number) });
+    expect(result.persist).toEqual({
+      book: "sample",
+      page: 2,
+      savedAt: expect.any(Number),
+    });
   });
 });
 

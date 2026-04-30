@@ -13,9 +13,7 @@ export type ParsedBook = {
   text: string;
 };
 
-export type TextFailure =
-  | { kind: "unsupported-encoding" }
-  | { kind: "empty" };
+export type TextFailure = { kind: "unsupported-encoding" } | { kind: "empty" };
 
 const UTF8_BOM_BYTES = new Uint8Array([0xef, 0xbb, 0xbf]);
 

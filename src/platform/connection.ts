@@ -6,10 +6,7 @@
  * values are interpreted.
  */
 
-import {
-  DeviceConnectType,
-  EvenAppBridge,
-} from "@evenrealities/even_hub_sdk";
+import { DeviceConnectType, EvenAppBridge } from "@evenrealities/even_hub_sdk";
 import { Teardowns } from "./teardown";
 
 export type ConnectionState = "connected" | "connecting" | "not-connected";

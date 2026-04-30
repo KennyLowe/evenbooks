@@ -14,9 +14,9 @@ The `.v1` suffix is intentional. Schema migrations in future versions write to `
 
 ```ts
 type StoredPosition = {
-  book: "sample";        // BookId; v1 always "sample"
-  page: number;          // 0-based; integer in [0, totalPages)
-  savedAt: number;       // ms since epoch; informational only
+  book: "sample"; // BookId; v1 always "sample"
+  page: number; // 0-based; integer in [0, totalPages)
+  savedAt: number; // ms since epoch; informational only
 };
 ```
 
@@ -48,14 +48,14 @@ Called once at bootstrap, after `waitForEvenAppBridge()` resolves and after `pag
 
 ```ts
 type ReadResult =
-  | { kind: "fresh-start" }                                // key absent; first ever launch
-  | { kind: "resumed"; page: number }                      // valid value found
+  | { kind: "fresh-start" } // key absent; first ever launch
+  | { kind: "resumed"; page: number } // valid value found
   | { kind: "recovered"; page: 0; reason: RecoveryReason };
 
 type RecoveryReason =
-  | "unparseable"                                          // JSON.parse threw
-  | "wrong-book"                                           // future-proofing for spec 002
-  | "out-of-range";                                        // page index ≥ totalPages
+  | "unparseable" // JSON.parse threw
+  | "wrong-book" // future-proofing for spec 002
+  | "out-of-range"; // page index ≥ totalPages
 ```
 
 Algorithm:
@@ -74,6 +74,7 @@ Algorithm:
 ```
 
 The caller (bootstrap in `main.ts`) does:
+
 - `fresh-start` → start at page 0; no notice.
 - `resumed` → start at returned page; no notice.
 - `recovered` → start at page 0; emit a phone-side notice corresponding to the `reason` (see `contracts/phone-ui.md`).
@@ -84,17 +85,18 @@ Save failures: visible on the phone-side UI for 5 s as `"could not save position
 
 Read recoveries: visible on the phone-side UI for 5 s, message varies by reason:
 
-| `RecoveryReason` | Phone-side notice |
-|---|---|
-| `unparseable` | "Could not restore previous position." |
-| `wrong-book` | "No saved position for this book." |
-| `out-of-range` | "Saved position is out of range; resumed at the start." |
+| `RecoveryReason` | Phone-side notice                                       |
+| ---------------- | ------------------------------------------------------- |
+| `unparseable`    | "Could not restore previous position."                  |
+| `wrong-book`     | "No saved position for this book."                      |
+| `out-of-range`   | "Saved position is out of range; resumed at the start." |
 
 These notices are also written to `console.warn` for dev visibility.
 
 ## Versioning
 
 Schema changes bump the suffix:
+
 - v1 → v2: add a new key `evenBooks.position.v2`. v2 readers attempt v2 first, then fall back to migrating v1 to v2 (read v1, write v2, ignore v1 after).
 - v1 readers never attempt to read non-v1 keys.
 
@@ -103,6 +105,7 @@ This is not relevant to v1 implementation but is documented so the contract is s
 ## Test coverage (Vitest)
 
 `tests/unit/persistence.test.ts` exercises:
+
 - Empty / null / undefined raw → `fresh-start`.
 - Garbage string → `recovered/unparseable`.
 - Valid JSON, wrong book → `recovered/wrong-book`.

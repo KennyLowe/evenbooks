@@ -12,10 +12,7 @@
 
 import type { EvenAppBridge } from "@evenrealities/even_hub_sdk";
 import type { NoticeChannel } from "../platform/errors";
-import {
-  compareLibraryEntries,
-  type LibraryEntry,
-} from "./library-entry";
+import { compareLibraryEntries, type LibraryEntry } from "./library-entry";
 import type { BookId } from "../content/sample-text";
 
 export const LIBRARY_KEY = "evenBooks.library.v2";
@@ -38,6 +35,12 @@ export function addEntry(library: Library, entry: LibraryEntry): Library {
   return { ...library, entries: next };
 }
 
+/** Remove an entry by id; if absent, returns the library unchanged. */
+export function removeEntry(library: Library, id: BookId): Library {
+  if (!library.entries.some((e) => e.id === id)) return library;
+  return { ...library, entries: library.entries.filter((e) => e.id !== id) };
+}
+
 /** Bump an existing entry's addedAt to `ts` (used for duplicate handling). */
 export function bumpEntry(library: Library, id: BookId, ts: number): Library {
   const next = library.entries.map((e) =>
@@ -47,11 +50,7 @@ export function bumpEntry(library: Library, id: BookId, ts: number): Library {
 }
 
 /** Update lastOpenedAt on an entry. */
-export function markOpened(
-  library: Library,
-  id: BookId,
-  ts: number,
-): Library {
+export function markOpened(library: Library, id: BookId, ts: number): Library {
   const next = library.entries.map((e) =>
     e.id === id ? { ...e, lastOpenedAt: ts } : e,
   );
@@ -66,10 +65,7 @@ export function findEntry(
 }
 
 /** Bootstrap a fresh library containing only the bundled sample entry. */
-export function bootstrapWithSample(
-  totalPages: number,
-  now: number,
-): Library {
+export function bootstrapWithSample(totalPages: number, now: number): Library {
   const sample: LibraryEntry = {
     id: "sample",
     title: "The Tell-Tale Heart",
@@ -146,12 +142,19 @@ export async function loadLibrary(
   };
 }
 
-/** Save the library. Failures emit a save-failed notice; never thrown. */
+/**
+ * Save the library. Returns `true` on success, `false` on failure (failure
+ * also emits a save-failed notice). Never throws.
+ *
+ * The boolean return lets the v3 delete orchestrator detect a library-write
+ * failure and roll back. v2 callers can ignore the return value and rely
+ * on the notice channel as before.
+ */
 export async function saveLibrary(
   bridge: EvenAppBridge,
   channel: NoticeChannel,
   library: Library,
-): Promise<void> {
+): Promise<boolean> {
   const payload = JSON.stringify({
     version: 2,
     entries: library.entries,
@@ -160,9 +163,12 @@ export async function saveLibrary(
     const ok = await bridge.setLocalStorage(LIBRARY_KEY, payload);
     if (!ok) {
       channel.emit({ kind: "save-failed" });
+      return false;
     }
+    return true;
   } catch (e) {
     console.warn("[evenBooks] saveLibrary threw:", e);
     channel.emit({ kind: "save-failed" });
+    return false;
   }
 }

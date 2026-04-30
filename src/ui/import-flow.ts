@@ -23,9 +23,7 @@ export interface ImportFlowHandle {
 export function mountImportFlow(
   onFile: (file: File) => void,
 ): ImportFlowHandle {
-  const button = document.querySelector<HTMLButtonElement>(
-    ".import .add-book",
-  );
+  const button = document.querySelector<HTMLButtonElement>(".import .add-book");
   const picker = document.querySelector<HTMLInputElement>(
     ".import .file-picker",
   );

@@ -35,7 +35,7 @@ The phone remains authoritative for all state; the glasses are a derived viewpor
 - Q: How do import refusal messages (DRM, malformed, unsupported, oversize, encoding, empty) surface to the user? → A: Persistent inline error in a dedicated slot near the "Add book" button, dismissed on the user's next interaction (tap Add book, tap a library entry, or explicit close). Distinct from the v1 transient notice channel, which stays for ephemeral status (save-failed, recovery messages).
 - Q: How does the import progress indicator look? → A: Non-blocking inline "Importing '<filename>'…" with an indeterminate spinner, in the same import-flow area as the import error slot (Q2). No percentage, no stages. User can keep scrolling the library while the import runs.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 — Import an EPUB and read it (Priority: P1)
 
@@ -104,7 +104,7 @@ A user accidentally tries to import a DRM-protected EPUB (e.g. one purchased fro
 - **Glasses disconnected during import**: import is independent of glasses connectivity; completes regardless. Reading the imported book later requires connection per usual.
 - **Storage full during import save**: import fails with a non-technical "couldn't save" message that mentions free space. The library is unchanged.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 Functional requirements describe **what** the user can do. Numbers (latencies, sizes, percentages) live in Success Criteria, not here.
 
@@ -154,7 +154,7 @@ Functional requirements describe **what** the user can do. Numbers (latencies, s
 - **Reading Position**: per-book current page index. Authoritative on the phone; persisted across exits. Same shape as v1's reading position, scoped per book.
 - **Import Outcome**: per import attempt, either a successful Book or a typed Failure (`drm-protected` / `malformed` / `unsupported-format` / `oversize` / `unsupported-encoding` / `empty` / `storage-full`).
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 Numbers below are provisional v2-of-import targets, validated in the simulator and revisited after the first hardware-validation pass per the constitution's "What we don't yet know" section.
 

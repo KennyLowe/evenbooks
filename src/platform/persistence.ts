@@ -19,6 +19,33 @@ export function positionKeyFor(bookId: BookId): string {
   return POSITION_KEY_PREFIX + bookId;
 }
 
+/**
+ * Tombstone API (v3): a book id added here is treated as "just deleted;
+ * ignore any in-flight position writes for ttl ms." Used by the v3 delete
+ * orchestrator (research.md R6) to absorb writes that would otherwise
+ * leave an orphan position key.
+ */
+const tombstones: Map<BookId, ReturnType<typeof setTimeout>> = new Map();
+
+export function tombstone(id: BookId, ttlMs = 1000): void {
+  const existing = tombstones.get(id);
+  if (existing !== undefined) clearTimeout(existing);
+  const timer = setTimeout(() => {
+    tombstones.delete(id);
+  }, ttlMs);
+  tombstones.set(id, timer);
+}
+
+export function isTombstoned(id: BookId): boolean {
+  return tombstones.has(id);
+}
+
+/** Test-only: clear all tombstones synchronously. */
+export function _clearTombstonesForTests(): void {
+  for (const t of tombstones.values()) clearTimeout(t);
+  tombstones.clear();
+}
+
 export interface StoredPosition {
   readonly book: BookId;
   readonly page: number;
@@ -87,9 +114,19 @@ export async function writePosition(
   channel: NoticeChannel,
   position: StoredPosition,
 ): Promise<void> {
+  // If this book was just deleted (within the tombstone window), drop the
+  // write silently. Per research.md R6: absorbs in-flight writes that
+  // would otherwise leave an orphan position key after a delete.
+  if (isTombstoned(position.book)) {
+    return;
+  }
+
   const payload = JSON.stringify(position);
   try {
-    const ok = await bridge.setLocalStorage(positionKeyFor(position.book), payload);
+    const ok = await bridge.setLocalStorage(
+      positionKeyFor(position.book),
+      payload,
+    );
     if (!ok) {
       channel.emit({ kind: "save-failed" });
     }

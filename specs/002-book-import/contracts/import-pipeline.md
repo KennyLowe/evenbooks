@@ -85,7 +85,9 @@ Each stage is independently testable; stages 3, 4, 6, 7, 8 each get their own un
 `src/import/drm.ts` exports:
 
 ```ts
-function detectsDrm(zipFiles: { [path: string]: { content: Uint8Array } }): boolean;
+function detectsDrm(zipFiles: {
+  [path: string]: { content: Uint8Array };
+}): boolean;
 ```
 
 Returns `true` if **any** of the following hold:
@@ -101,19 +103,21 @@ Returns `false` otherwise. Pure function over the unpacked ZIP file map; testabl
 ## EPUB parser (`src/import/epub.ts`)
 
 ```ts
-async function epubParse(buffer: ArrayBuffer): Promise<ParsedBook | EpubFailure>;
+async function epubParse(
+  buffer: ArrayBuffer,
+): Promise<ParsedBook | EpubFailure>;
 
 type ParsedBook = {
   format: "epub";
   title: string;
   author: string;
   text: string;
-  sourceBytes: ArrayBuffer;        // for hashing
+  sourceBytes: ArrayBuffer; // for hashing
 };
 
 type EpubFailure =
   | { kind: "drm-protected" }
-  | { kind: "malformed"; detail?: string }   // detail is for console.warn, not the user
+  | { kind: "malformed"; detail?: string } // detail is for console.warn, not the user
   | { kind: "empty" };
 ```
 
@@ -123,12 +127,12 @@ Algorithm (high level):
 2. Run DRM detection (above); if positive → `drm-protected`.
 3. Read `META-INF/container.xml`; find the first `<rootfile>` with `media-type="application/oebps-package+xml"`; resolve its `full-path` attribute.
 4. Read the OPF file at that path; parse with DOMParser as XML.
-    - Read metadata: `<dc:title>` (first), `<dc:creator>` (all, joined with `, `).
-    - Read the spine: `<spine>` → `<itemref idref="…">` in order; map each `idref` to its `<manifest>/<item href="…" media-type="application/xhtml+xml">`.
+   - Read metadata: `<dc:title>` (first), `<dc:creator>` (all, joined with `, `).
+   - Read the spine: `<spine>` → `<itemref idref="…">` in order; map each `idref` to its `<manifest>/<item href="…" media-type="application/xhtml+xml">`.
 5. For each spine item, fetch its content document, parse as HTML/XHTML, walk the DOM:
-    - Skip elements: `script`, `style`, `head`, `nav` (EPUB 3 navigation doc), `img`, `svg`, `audio`, `video`, `iframe`.
-    - Treat as paragraph break: `p`, `div`, `section`, `article`, `h1`–`h6`, `li`, `blockquote`, `br`.
-    - Treat as text: any remaining text node.
+   - Skip elements: `script`, `style`, `head`, `nav` (EPUB 3 navigation doc), `img`, `svg`, `audio`, `video`, `iframe`.
+   - Treat as paragraph break: `p`, `div`, `section`, `article`, `h1`–`h6`, `li`, `blockquote`, `br`.
+   - Treat as text: any remaining text node.
 6. Concatenate paragraph blocks with `\n\n`; collapse internal whitespace to single spaces; trim.
 7. If the resulting text is empty → `empty`. Otherwise return `ParsedBook`.
 
@@ -145,11 +149,12 @@ Edge cases:
 ## Plain-text parser (`src/import/text-import.ts`)
 
 ```ts
-async function textImport(buffer: ArrayBuffer, filename: string): Promise<ParsedBook | TextFailure>;
+async function textImport(
+  buffer: ArrayBuffer,
+  filename: string,
+): Promise<ParsedBook | TextFailure>;
 
-type TextFailure =
-  | { kind: "unsupported-encoding" }
-  | { kind: "empty" };
+type TextFailure = { kind: "unsupported-encoding" } | { kind: "empty" };
 ```
 
 Algorithm:
@@ -174,8 +179,8 @@ Algorithm:
 ## Content hashing (`src/library/duplicates.ts`)
 
 ```ts
-async function hashFileBytes(buffer: ArrayBuffer): Promise<BookId>;     // for EPUBs
-async function hashNormalisedText(text: string): Promise<BookId>;        // for plain text
+async function hashFileBytes(buffer: ArrayBuffer): Promise<BookId>; // for EPUBs
+async function hashNormalisedText(text: string): Promise<BookId>; // for plain text
 ```
 
 Both use `crypto.subtle.digest("SHA-256", input)` and truncate the hex output to 16 characters. The bundled sample's id `"sample"` is namespace-disjoint from any hash output (which is always 16 lowercase hex chars).
@@ -186,15 +191,15 @@ Both use `crypto.subtle.digest("SHA-256", input)` and truncate the hex output to
 
 The `ImportOutcome.failure.reason` discriminator maps 1:1 to the exact text shown in the import error slot. These strings are part of the spec contract — changing them is a UX-policy change requiring a spec update.
 
-| `reason` | User-facing message |
-|---|---|
-| `drm-protected` | "This book is protected by DRM and can't be imported. evenBooks supports DRM-free EPUB and plain text." |
-| `malformed` | "Couldn't read this file. It may be damaged or in an unsupported format." |
-| `unsupported-format` | "evenBooks supports DRM-free EPUB and plain-text (.txt) files only." |
-| `oversize` | "This file is larger than evenBooks supports right now (max 50 MB)." |
-| `unsupported-encoding` | "Unsupported text encoding — please save the file as UTF-8." |
-| `empty` | "This book has no readable content." |
-| `storage-full` | (transient notice, not inline) "Couldn't save this book — your phone may be out of space." |
+| `reason`               | User-facing message                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- |
+| `drm-protected`        | "This book is protected by DRM and can't be imported. evenBooks supports DRM-free EPUB and plain text." |
+| `malformed`            | "Couldn't read this file. It may be damaged or in an unsupported format."                               |
+| `unsupported-format`   | "evenBooks supports DRM-free EPUB and plain-text (.txt) files only."                                    |
+| `oversize`             | "This file is larger than evenBooks supports right now (max 50 MB)."                                    |
+| `unsupported-encoding` | "Unsupported text encoding — please save the file as UTF-8."                                            |
+| `empty`                | "This book has no readable content."                                                                    |
+| `storage-full`         | (transient notice, not inline) "Couldn't save this book — your phone may be out of space."              |
 
 `duplicate` outcome surfaces the message: "Already in your library — opening the existing copy." (also via the import error slot, despite not being a failure).
 

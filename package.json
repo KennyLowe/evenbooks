@@ -1,7 +1,7 @@
 {
   "name": "evenbooks",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,20 +10,30 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "pack": "evenhub pack",
-    "simulate": "node node_modules/@evenrealities/evenhub-simulator/bin/index.js http://localhost:5173"
+    "simulate": "node node_modules/@evenrealities/evenhub-simulator/bin/index.js http://localhost:5173",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "ci": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
     "@evenrealities/even_hub_sdk": "^0.0.10",
     "jszip": "^3.10.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@evenrealities/evenhub-cli": "^0.1.12",
     "@evenrealities/evenhub-simulator": "^0.7.2",
     "@types/jsdom": "^28.0.1",
     "@types/node": "^25.6.0",
+    "eslint": "^10.2.1",
     "fake-indexeddb": "^6.2.5",
     "jsdom": "^29.1.1",
+    "prettier": "^3.8.3",
     "typescript": "^5.7.0",
+    "typescript-eslint": "^8.59.1",
     "vite": "^5.4.0",
     "vitest": "^4.1.5"
   }
