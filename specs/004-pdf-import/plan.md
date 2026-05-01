@@ -44,16 +44,16 @@ Carries forward from v1/v2/v3: SDK, JSZip, Vite, Vitest, ESLint, Prettier, jsdom
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design._
 
-| Principle | Verdict | Evidence in plan |
-|---|---|---|
-| **I. Every Frame Is Glanceable (NN)** | ✅ Pass | No glasses-side surface added. PDF text → v1 paginate → existing frame composers. Each rendered page is one glanceable frame, exactly as for EPUB. |
-| **II. Data Minimalism** | ✅ Pass | No microphone, no IMU, no network. PDF parsing is local. Dynamic import means non-PDF users incur zero cost. |
-| **III. Phone Is the Brain** | ✅ Pass | PDF parsing + storage all phone-side. Glasses are unaffected by the new format. |
-| **IV. Battery and Bandwidth Are Sacred** | ✅ Pass | No new BLE traffic. PDF text is paginated once at import, cached in IndexedDB. The lazy-load chunk only fetches when the user picks a `.pdf`. |
-| **V. Crash Without Lying** | ✅ Pass | Image-only / encrypted / malformed PDFs surface typed canonical messages through the existing import error slot. Worker-load failure falls back gracefully to main-thread parsing with a console warning (no user-visible silent degradation). |
-| **VI. Simulator-First** | ✅ Pass | PDF parsing runs in the WebView; testable end-to-end in the simulator. Hardware validation folds into the existing combined v1/v2/v3/v4 pass. |
+| Principle                                | Verdict | Evidence in plan                                                                                                                                                                                                                               |
+| ---------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **I. Every Frame Is Glanceable (NN)**    | ✅ Pass | No glasses-side surface added. PDF text → v1 paginate → existing frame composers. Each rendered page is one glanceable frame, exactly as for EPUB.                                                                                             |
+| **II. Data Minimalism**                  | ✅ Pass | No microphone, no IMU, no network. PDF parsing is local. Dynamic import means non-PDF users incur zero cost.                                                                                                                                   |
+| **III. Phone Is the Brain**              | ✅ Pass | PDF parsing + storage all phone-side. Glasses are unaffected by the new format.                                                                                                                                                                |
+| **IV. Battery and Bandwidth Are Sacred** | ✅ Pass | No new BLE traffic. PDF text is paginated once at import, cached in IndexedDB. The lazy-load chunk only fetches when the user picks a `.pdf`.                                                                                                  |
+| **V. Crash Without Lying**               | ✅ Pass | Image-only / encrypted / malformed PDFs surface typed canonical messages through the existing import error slot. Worker-load failure falls back gracefully to main-thread parsing with a console warning (no user-visible silent degradation). |
+| **VI. Simulator-First**                  | ✅ Pass | PDF parsing runs in the WebView; testable end-to-end in the simulator. Hardware validation folds into the existing combined v1/v2/v3/v4 pass.                                                                                                  |
 
 **Result**: Gate **PASSES**. No Complexity Tracking entries.
 
@@ -104,8 +104,8 @@ tests/
 > Empty.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| _(none)_ | — | — |
+| --------- | ---------- | ------------------------------------ |
+| _(none)_  | —          | —                                    |
 
 ## Phase 0 — Research
 

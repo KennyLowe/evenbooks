@@ -70,9 +70,7 @@ let workerAvailable = false;
 async function loadPdfjs(): Promise<PdfjsLib> {
   if (cachedLib) return cachedLib;
   // @ts-expect-error — pdfjs-dist legacy build types differ from our interface
-  const lib = (await import(
-    "pdfjs-dist/legacy/build/pdf.mjs"
-  )) as PdfjsLib;
+  const lib = (await import("pdfjs-dist/legacy/build/pdf.mjs")) as PdfjsLib;
 
   if (!workerConfigured) {
     // pdfjs-dist's static block sets workerSrc to "./pdf.worker.mjs" on Node
@@ -193,7 +191,10 @@ export async function pdfParse(
     if (block.length > 0) pageBlocks.push(block);
   }
 
-  const fullText = pageBlocks.join("\n\n").replace(/[ \t]+\n/g, "\n").trim();
+  const fullText = pageBlocks
+    .join("\n\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
 
   // Image-only detection: per-page text density. A genuine scanned PDF has
   // near-zero text per page; a real text PDF has dozens-to-thousands.
@@ -261,7 +262,9 @@ function itemsToLines(items: readonly PdfTextItem[]): string[] {
     lines.push(currentLine);
   }
 
-  return lines.map((l) => l.replace(/\s+/g, " ").trim()).filter((l) => l.length > 0);
+  return lines
+    .map((l) => l.replace(/\s+/g, " ").trim())
+    .filter((l) => l.length > 0);
 }
 
 /**

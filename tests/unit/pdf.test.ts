@@ -36,7 +36,8 @@ describe("pdfParse — happy path", () => {
   it("defaults author to 'Unknown' when creator metadata is absent", async () => {
     const pdf = await buildMinimalPdf({
       title: "Anon Work",
-      body: "Body text long enough to pass the image-only threshold for a small file. " +
+      body:
+        "Body text long enough to pass the image-only threshold for a small file. " +
         "Filler filler filler filler filler filler filler filler filler.",
     });
     const out = await pdfParse(pdf, "x.pdf");

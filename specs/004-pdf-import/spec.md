@@ -17,7 +17,7 @@ Everything else carries forward from v2: file picker, 50 MB cap, content-hash-ba
 
 The phone remains authoritative for all state; the glasses are a derived viewport (constitution Principle III).
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 — Import a text-based PDF and read it (Priority: P1)
 
@@ -56,7 +56,7 @@ A user attempts to import a PDF that is image-only (scanned), encrypted (passwor
 - **PDFs with only embedded fonts no longer present** (extraction returns gibberish): falls back to the v1 user-visible reading test — if the user reads it and it's garbled, that's a known-limitation case; we do not attempt automatic detection.
 - **Form-field / annotation-only PDFs**: form fields are treated as text where extractable; annotations are ignored.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -75,7 +75,7 @@ A user attempts to import a PDF that is image-only (scanned), encrypted (passwor
 
 No new persistent entities. Reuses `Book`, `LibraryEntry`, `ReadingPosition`, `ImportOutcome`. Adds one new value to `ImportFailureReason`: `"image-only-pdf"`.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 Numbers below are provisional; revisited after the first hardware-validation pass.
 

@@ -20,7 +20,7 @@ export type ImportFailureReason =
   | "oversize"
   | "unsupported-encoding"
   | "empty"
-  | "image-only-pdf"      // NEW
+  | "image-only-pdf" // NEW
   | "storage-full";
 ```
 
